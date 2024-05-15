@@ -53,11 +53,11 @@ public class BudgetService {
             Budget existingBudget = existingBudgetOptional.get();
 
             // Check if fields in the incoming budget are not null, then update
-            if (budget.getAmount() != 0) {
-                existingBudget.setAmount(budget.getAmount());
+            if (budget.getTotalAmount() != 0) {
+                existingBudget.setTotalAmount(budget.getTotalAmount());
             }
-            if (budget.getCurrentAmount() != 0) {
-                existingBudget.setCurrentAmount(budget.getCurrentAmount());
+            if (budget.getSpentAmount() != 0) {
+                existingBudget.setSpentAmount(budget.getSpentAmount());
             }
             if (budget.getBudgetName() != null) {
                 existingBudget.setBudgetName(budget.getBudgetName());
