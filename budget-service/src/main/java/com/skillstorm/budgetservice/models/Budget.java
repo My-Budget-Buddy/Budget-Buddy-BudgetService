@@ -39,10 +39,11 @@ public class Budget {
     @Column(name = "budget_name")
     private String budgetName;
 
-    private int amount;
+    @Column(name = "total_amount")
+    private int totalAmount;
 
-    @Column(name = "current_amount")
-    private int currentAmount;
+    @Column(name = "spent_amount")
+    private int spentAmount;
 
     @Column
     private String category;
