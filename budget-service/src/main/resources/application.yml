@@ -1,7 +1,7 @@
 #Tell Spring where to get the data from
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5433/
+    url: jdbc:postgresql://localhost:5433/budget_service
     username: postgres
     password:
 
