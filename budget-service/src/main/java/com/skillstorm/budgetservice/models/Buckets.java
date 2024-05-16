@@ -39,6 +39,8 @@ public class Buckets {
     private String bucketMonth;
     // boolean
 
+    private Boolean isCompleted;
+
     private LocalDateTime dateCreated;
 
     @PrePersist
@@ -48,12 +50,13 @@ public class Buckets {
 
     public Buckets() {}
 
-    public Buckets(User user, String bucketName, Double amountRequired, Double amountAvailable, String bucketMonth) {
+    public Buckets(User user, String bucketName, Double amountRequired, Double amountAvailable, String bucketMonth, Boolean isCompleted) {
         this.user = user;
         this.bucketName = bucketName;
         this.amountRequired = amountRequired;
         this.amountAvailable = amountAvailable;
         this.bucketMonth = bucketMonth;
+        this.isCompleted = isCompleted;
     }
 
 
@@ -121,6 +124,12 @@ public class Buckets {
         this.dateCreated = dateCreated;
     }
 
+    public Boolean getIsCompleted() {
+        return isCompleted;
+    }
 
+    public void setIsCompleted(Boolean isCompleted) {
+        this.isCompleted = isCompleted;
+    }
 
 }
