@@ -28,7 +28,7 @@ public class Buckets {
     // private int userId;
 
     @Column(nullable = false)
-    private String budgetName;
+    private String bucketName;
 
     @Column(nullable = false)
     private Double amountRequired;
@@ -36,7 +36,8 @@ public class Buckets {
     @Column(nullable = false)
     private Double amountAvailable;
 
-    private String budgetMonth;
+    private String bucketMonth;
+    // boolean
 
     private LocalDateTime dateCreated;
 
@@ -47,12 +48,12 @@ public class Buckets {
 
     public Buckets() {}
 
-    public Buckets(User user, String budgetName, Double amountRequired, Double amountAvailable, String month) {
+    public Buckets(User user, String bucketName, Double amountRequired, Double amountAvailable, String bucketMonth) {
         this.user = user;
-        this.budgetName = budgetName;
+        this.bucketName = bucketName;
         this.amountRequired = amountRequired;
         this.amountAvailable = amountAvailable;
-        this.budgetMonth = month;
+        this.bucketMonth = bucketMonth;
     }
 
 
@@ -80,12 +81,12 @@ public class Buckets {
         this.user = user;
     }
 
-    public String getBudgetName() {
-        return budgetName;
+    public String getBucketName() {
+        return bucketName;
     }
 
-    public void setBudgetName(String budgetName) {
-        this.budgetName = budgetName;
+    public void setBucketName(String bucketName) {
+        this.bucketName = bucketName;
     }
 
     public Double getAmountRequired() {
@@ -104,12 +105,12 @@ public class Buckets {
         this.amountAvailable = amountAvailable;
     }
 
-    public String getBudgetMonth() {
-        return budgetMonth;
+    public String getBucketMonth() {
+        return bucketMonth;
     }
 
-    public void setBudgetMonth(String budgetMonth) {
-        this.budgetMonth = budgetMonth;
+    public void setBucketMonth(String bucketMonth) {
+        this.bucketMonth = bucketMonth;
     }
 
     public LocalDateTime getDateCreated() {
