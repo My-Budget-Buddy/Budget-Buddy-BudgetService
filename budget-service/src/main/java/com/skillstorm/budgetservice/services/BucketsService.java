@@ -39,8 +39,8 @@ public class BucketsService {
         if (existingBucket.isPresent()) {
             Buckets bucket = existingBucket.get();
 
-            if (bucketDetails.getBudgetName() != null) {
-                bucket.setBudgetName(bucketDetails.getBudgetName());
+            if (bucketDetails.getBucketName() != null) {
+                bucket.setBucketName(bucketDetails.getBucketName());
             }
 
             if (bucketDetails.getAmountRequired() != null) {
@@ -51,8 +51,8 @@ public class BucketsService {
                 bucket.setAmountAvailable(bucketDetails.getAmountAvailable());
             }
 
-            if (bucketDetails.getBudgetMonth() != null) {
-                bucket.setBudgetMonth(bucketDetails.getBudgetMonth());
+            if (bucketDetails.getBucketMonth() != null) {
+                bucket.setBucketMonth(bucketDetails.getBucketMonth());
             }
 
             return bucketsRepository.save(bucket);
