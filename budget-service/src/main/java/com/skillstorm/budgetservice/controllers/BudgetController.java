@@ -16,9 +16,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.skillstorm.budgetservice.dto.TransactionDTO;
 import com.skillstorm.budgetservice.models.Buckets;
 import com.skillstorm.budgetservice.models.Budget;
 import com.skillstorm.budgetservice.services.BudgetService;
+import com.skillstorm.budgetservice.services.TranscationService;
 
 @RestController
 @RequestMapping("/budgets")
@@ -102,6 +104,20 @@ public class BudgetController {
         List<Budget> budgets = budgetService.getBudgetsByMonthYearAndUserId(date, userId);
 
         return new ResponseEntity<List<Budget>>(budgets, HttpStatus.OK);
+    }
+
+    @GetMapping("transactions/{monthYear}/user/{userId}")
+    public ResponseEntity<List<TransactionDTO>> getTranscationsByMonthYear(@PathVariable String monthYear,
+            @PathVariable int userId) {
+
+        // Define a DateTimeFormatter to parse the date in the format yyyy-MM-dd
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+        // Parse the monthYear string to a LocalDate object by appending "-01"
+        // This ensures the date is in the format yyyy-MM-dd for LocalDate parsing
+        LocalDate date = LocalDate.parse(monthYear + "-01", formatter);
+        List<TransactionDTO> transactions = budgetService.findTransactionByMonthYear(date, userId);
+        return new ResponseEntity<List<TransactionDTO>>(transactions, HttpStatus.OK);
     }
 
 }
