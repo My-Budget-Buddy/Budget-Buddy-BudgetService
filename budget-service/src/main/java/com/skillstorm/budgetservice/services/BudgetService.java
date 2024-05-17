@@ -3,10 +3,12 @@ package com.skillstorm.budgetservice.services;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.skillstorm.budgetservice.dto.TransactionDTO;
 import com.skillstorm.budgetservice.models.Buckets;
 import com.skillstorm.budgetservice.models.Budget;
 import com.skillstorm.budgetservice.repositories.BudgetRepository;
@@ -16,6 +18,9 @@ public class BudgetService {
 
     @Autowired
     BudgetRepository budgetRepository;
+
+    @Autowired
+    TranscationService transcationService;
 
     public List<Budget> findAllBudgets() {
         return budgetRepository.findAll();
@@ -87,7 +92,24 @@ public class BudgetService {
         budgetRepository.deleteById(id);
     }
 
-    public List<Budget> getBudgetsByMonthYearAndUserId(LocalDate monthYear, int userId) {
-        return budgetRepository.findByMonthYearAndUserId(monthYear, userId);
+    public List<Budget> getBudgetsByMonthYearAndUserId(LocalDate date, int userId) {
+        return budgetRepository.findByMonthYearAndUserId(date, userId);
+    }
+
+    public List<TransactionDTO> findTransactionByMonthYear(LocalDate monthYear, int userId) {
+        // Retrieve all transactions for the given user, excluding income transactions
+        List<TransactionDTO> transactions = transcationService.getTransactionsExcludingIncome(userId);
+
+        // Filter transactions to only include those that match the specified month and
+        // year
+        List<TransactionDTO> filteredTransactions = transactions.stream()
+                .filter(transaction -> {
+                    LocalDate transactionDate = transaction.getDate(); // Assuming getDate() returns a LocalDate
+                    return transactionDate.getYear() == monthYear.getYear() &&
+                            transactionDate.getMonth() == monthYear.getMonth();
+                })
+                .collect(Collectors.toList());
+
+        return filteredTransactions;
     }
 }
