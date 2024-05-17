@@ -1,11 +1,13 @@
 package com.skillstorm.budgetservice.services;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.skillstorm.budgetservice.models.Buckets;
 import com.skillstorm.budgetservice.models.Budget;
 import com.skillstorm.budgetservice.repositories.BudgetRepository;
 
@@ -56,11 +58,11 @@ public class BudgetService {
             if (budget.getCategory() != null) {
                 existingBudget.setCategory(budget.getCategory());
             }
-            if (budget.getSpentAmount() != 0) {
+            if (budget.getSpentAmount() != null) {
                 existingBudget.setSpentAmount(budget.getSpentAmount());
             }
-            if (budget.isReserved() == true || budget.isReserved() == false) {
-                existingBudget.setReserved(budget.isReserved());
+            if (budget.getIsReserved() != null) {
+                existingBudget.setIsReserved(budget.getIsReserved());
             }
             if (budget.getMonthYear() != null) {
                 existingBudget.setMonthYear(budget.getMonthYear());
@@ -85,4 +87,7 @@ public class BudgetService {
         budgetRepository.deleteById(id);
     }
 
+    public List<Budget> getBudgetsByMonthYearAndUserId(LocalDate monthYear, int userId) {
+        return budgetRepository.findByMonthYearAndUserId(monthYear, userId);
+    }
 }

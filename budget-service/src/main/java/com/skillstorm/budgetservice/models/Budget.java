@@ -4,6 +4,8 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.skillstorm.budgetservice.utils.CustomLocalData;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -39,12 +41,14 @@ public class Budget {
     @Column
     private String category;
 
+    @NonNull
     @Column(name = "spent_amount")
-    private int spentAmount;
+    private Double spentAmount;
 
     @Column(name = "is_reserved")
-    private boolean isReserved;
+    private Boolean isReserved;
 
+    @JsonDeserialize(using = CustomLocalData.class)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM")
     private LocalDate monthYear;
 
@@ -55,7 +59,7 @@ public class Budget {
 
     @PrePersist
     protected void onCreate() {
-        LocalDateTime xxx = LocalDateTime.now();
+        createdTimeStamp = LocalDateTime.now();
     }
 
 }

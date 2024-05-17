@@ -1,5 +1,7 @@
 package com.skillstorm.budgetservice.controllers;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.skillstorm.budgetservice.models.Buckets;
 import com.skillstorm.budgetservice.models.Budget;
 import com.skillstorm.budgetservice.services.BudgetService;
 
@@ -79,12 +82,26 @@ public class BudgetController {
      *
      * @param id the ID of the budget to be deleted
      * @return a ResponseEntity object with no content and the corresponding HTTP
-     *         status code
+     *         status code/monthyear/{monthYear}/user/{userId}
      */
     @DeleteMapping("/{id}")
     public ResponseEntity<Budget> deleteBudget(@PathVariable int id) {
         budgetService.deleteBudgetById(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/monthyear/{monthYear}/user/{userId}")
+    public ResponseEntity<List<Budget>> getBudgetsByMonthYear(@PathVariable String monthYear,
+            @PathVariable int userId) {
+        // Define a DateTimeFormatter to parse the date in the format yyyy-MM-dd
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+        // Parse the monthYear string to a LocalDate object by appending "-01"
+        // This ensures the date is in the format yyyy-MM-dd for LocalDate parsing
+        LocalDate date = LocalDate.parse(monthYear + "-01", formatter);
+        List<Budget> budgets = budgetService.getBudgetsByMonthYearAndUserId(date, userId);
+
+        return new ResponseEntity<List<Budget>>(budgets, HttpStatus.OK);
     }
 
 }
