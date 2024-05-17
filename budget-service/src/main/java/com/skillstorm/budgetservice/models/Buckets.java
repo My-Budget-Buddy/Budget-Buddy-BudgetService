@@ -57,9 +57,11 @@ public class Buckets {
         dateCreated = LocalDateTime.now();
     }
 
-    public Buckets() {}
+    public Buckets() {
+    }
 
-    public Buckets(int userId, String bucketName, Double amountRequired, Double amountAvailable, LocalDate monthYear, Boolean isReserved, Boolean isActive) {
+    public Buckets(int userId, String bucketName, Double amountRequired, Double amountAvailable, LocalDate monthYear,
+            Boolean isReserved, Boolean isActive) {
         this.userId = userId;
         this.bucketName = bucketName;
         this.amountRequired = amountRequired;
@@ -68,7 +70,6 @@ public class Buckets {
         this.isReserved = isReserved;
         this.isActive = isActive;
     }
-
 
     public int getBucketId() {
         return bucketId;
@@ -87,11 +88,11 @@ public class Buckets {
     }
 
     // public User getUser() {
-    //     return user;
+    // return user;
     // }
 
     // public void setUser(User user) {
-    //     this.user = user;
+    // this.user = user;
     // }
 
     public String getBucketName() {
