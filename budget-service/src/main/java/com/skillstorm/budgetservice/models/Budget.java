@@ -1,6 +1,9 @@
 package com.skillstorm.budgetservice.models;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -31,25 +34,21 @@ public class Budget {
     @Column(name = "budget_id")
     private int budgetId;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
-
-    @NonNull
-    @Column(name = "budget_name")
-    private String budgetName;
-
-    @Column(name = "total_amount")
-    private int totalAmount;
-
-    @Column(name = "spent_amount")
-    private int spentAmount;
+    private int userId;
 
     @Column
     private String category;
 
-    @Column(name = "budget_month")
-    private String month;
+    @Column(name = "spent_amount")
+    private int spentAmount;
+
+    @Column(name = "is_reserved")
+    private boolean isReserved;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM")
+    private LocalDate monthYear;
+
+    private String notes;
 
     @Column(name = "created_timestamp")
     private LocalDateTime createdTimeStamp;

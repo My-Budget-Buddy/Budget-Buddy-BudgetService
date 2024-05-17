@@ -53,20 +53,20 @@ public class BudgetService {
             Budget existingBudget = existingBudgetOptional.get();
 
             // Check if fields in the incoming budget are not null, then update
-            if (budget.getTotalAmount() != 0) {
-                existingBudget.setTotalAmount(budget.getTotalAmount());
+            if (budget.getCategory() != null) {
+                existingBudget.setCategory(budget.getCategory());
             }
             if (budget.getSpentAmount() != 0) {
                 existingBudget.setSpentAmount(budget.getSpentAmount());
             }
-            if (budget.getBudgetName() != null) {
-                existingBudget.setBudgetName(budget.getBudgetName());
+            if (budget.isReserved() == true || budget.isReserved() == false) {
+                existingBudget.setReserved(budget.isReserved());
             }
-            if (budget.getCategory() != null) {
-                existingBudget.setCategory(budget.getCategory());
+            if (budget.getMonthYear() != null) {
+                existingBudget.setMonthYear(budget.getMonthYear());
             }
-            if (budget.getMonth() != null) {
-                existingBudget.setMonth(budget.getMonth());
+            if (budget.getNotes() != null) {
+                existingBudget.setNotes(budget.getNotes());
             }
 
             return budgetRepository.save(existingBudget);
