@@ -2,6 +2,8 @@ package com.skillstorm.budgetservice.controllers;
 
 import java.util.List;
 import java.util.Optional;
+
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
@@ -13,9 +15,12 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import java.time.format.DateTimeFormatter;
 
 import com.skillstorm.budgetservice.models.Buckets;
+import com.skillstorm.budgetservice.models.Budget;
 import com.skillstorm.budgetservice.services.BucketsService;
+import java.time.LocalDate;
 
 @RestController
 @RequestMapping("/buckets")
@@ -48,6 +53,14 @@ public class BucketsController {
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
+    }
+
+    @GetMapping("/monthyear/{monthYear}/user/{userId}")
+    public ResponseEntity<List<Buckets>> getBudgetsByMonthYear(@PathVariable String monthYear, @PathVariable int userId) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDate date = LocalDate.parse(monthYear + "-01", formatter); // This is to make sure the date is in the format of yyyy-MM-dd for local date
+        List<Buckets> budgets = bucketsService.getBudgetsByMonthYearAndUserId(date, userId);
+        return ResponseEntity.ok(budgets);
     }
 
     @PostMapping("/add")

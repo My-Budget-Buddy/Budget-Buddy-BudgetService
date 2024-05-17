@@ -2,10 +2,12 @@ package com.skillstorm.budgetservice.services;
 
 import java.util.List;
 import java.util.Optional;
+import java.time.LocalDate;
 
 import org.springframework.stereotype.Service;
 
 import com.skillstorm.budgetservice.models.Buckets;
+import com.skillstorm.budgetservice.models.Budget;
 import com.skillstorm.budgetservice.repositories.BucketsRepository;
 
 @Service
@@ -27,6 +29,10 @@ public class BucketsService {
 
     public Optional<Buckets> getBucketByBucketId(int bucketId) {
         return bucketsRepository.findById(bucketId);
+    }
+
+    public List<Buckets> getBudgetsByMonthYearAndUserId(LocalDate monthYear, int userId) {
+        return bucketsRepository.findByMonthYearAndUserId(monthYear, userId);
     }
 
     public Buckets saveBucket(Buckets bucket) {
@@ -51,8 +57,12 @@ public class BucketsService {
                 bucket.setAmountAvailable(bucketDetails.getAmountAvailable());
             }
 
-            if (bucketDetails.getBucketMonth() != null) {
-                bucket.setBucketMonth(bucketDetails.getBucketMonth());
+            if (bucketDetails.getMonthYear() != null) {
+                bucket.setMonthYear(bucketDetails.getMonthYear());
+            }
+
+            if (bucketDetails.getUserId() != 0) {
+                bucket.setUserId(bucketDetails.getUserId());
             }
 
             return bucketsRepository.save(bucket);
