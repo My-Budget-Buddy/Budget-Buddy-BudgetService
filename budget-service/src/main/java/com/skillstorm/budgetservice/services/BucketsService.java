@@ -65,6 +65,14 @@ public class BucketsService {
                 bucket.setUserId(bucketDetails.getUserId());
             }
 
+            if (bucketDetails.getIsActive() != null) {
+                bucket.setIsActive(bucketDetails.getIsActive());
+            }
+
+            if (bucketDetails.getIsReserved() != null) {
+                bucket.setIsReserved(bucketDetails.getIsReserved());
+            }
+
             return bucketsRepository.save(bucket);
         } else {
             throw new RuntimeException("Bucket not found");
