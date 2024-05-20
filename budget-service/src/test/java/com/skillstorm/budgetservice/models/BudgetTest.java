@@ -81,4 +81,5 @@ public class BudgetTest {
     void testNonNullSpentAmount() {
         assertThrows(NullPointerException.class, () -> budget.setSpentAmount(null));
     }
+
 }
