@@ -1,5 +1,6 @@
 package com.skillstorm.budgetservice.models;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -43,7 +44,7 @@ public class Budget {
 
     @NonNull
     @Column(name = "spent_amount")
-    private Double spentAmount;
+    private BigDecimal spentAmount;
 
     @Column(name = "is_reserved")
     private Boolean isReserved;
