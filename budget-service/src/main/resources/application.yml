@@ -1,9 +1,9 @@
 #Tell Spring where to get the data from
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5433/budget_service
-    username: postgres
-    password:
+    url: ${DATABASE_URL:jdbc:postgresql://localhost:5433/budget_service}
+    username: ${DATABASE_USERNAME:postgres}
+    password: ${DATABASE_PASSWORD:}
 
   jpa:
     properties:
@@ -15,3 +15,7 @@ spring:
       ddl-auto: create-drop
 
     show-sql: true
+# eureka:
+#   client:
+#     service-url:
+#       defaultZone: ${EUREKA_URL:http://localhost:8761/eureka}

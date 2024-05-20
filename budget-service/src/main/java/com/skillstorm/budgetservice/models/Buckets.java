@@ -5,14 +5,13 @@ import java.time.LocalDateTime;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.skillstorm.budgetservice.utils.CustomLocalData;
+import java.math.BigDecimal;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import java.time.LocalDate;
@@ -36,15 +35,14 @@ public class Buckets {
     private String bucketName;
 
     @Column(nullable = false)
-    private Double amountRequired;
+    private BigDecimal amountRequired;
 
     @Column(nullable = false)
-    private Double amountAvailable;
+    private BigDecimal amountAvailable;
 
     @JsonDeserialize(using = CustomLocalData.class)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM")
     private LocalDate monthYear;
-    // boolean
 
     private Boolean isReserved;
 
@@ -60,8 +58,8 @@ public class Buckets {
     public Buckets() {
     }
 
-    public Buckets(int userId, String bucketName, Double amountRequired, Double amountAvailable, LocalDate monthYear,
-            Boolean isReserved, Boolean isActive) {
+    public Buckets(int userId, String bucketName, BigDecimal amountRequired, BigDecimal amountAvailable,
+            LocalDate monthYear, Boolean isReserved, Boolean isActive, LocalDateTime dateCreated) {
         this.userId = userId;
         this.bucketName = bucketName;
         this.amountRequired = amountRequired;
@@ -69,6 +67,7 @@ public class Buckets {
         this.monthYear = monthYear;
         this.isReserved = isReserved;
         this.isActive = isActive;
+        this.dateCreated = dateCreated;
     }
 
     public int getBucketId() {
@@ -103,21 +102,22 @@ public class Buckets {
         this.bucketName = bucketName;
     }
 
-    public Double getAmountRequired() {
+    public BigDecimal getAmountRequired() {
         return amountRequired;
     }
 
-    public void setAmountRequired(Double amountRequired) {
+    public void setAmountRequired(BigDecimal amountRequired) {
         this.amountRequired = amountRequired;
     }
 
-    public Double getAmountAvailable() {
+    public BigDecimal getAmountAvailable() {
         return amountAvailable;
     }
 
-    public void setAmountAvailable(Double amountAvailable) {
+    public void setAmountAvailable(BigDecimal amountAvailable) {
         this.amountAvailable = amountAvailable;
     }
+
 
     public LocalDate getMonthYear() {
         return monthYear;
