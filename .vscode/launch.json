@@ -6,6 +6,12 @@
             "request": "launch",
             "cwd": "${workspaceFolder}",
             "mainClass": "com.skillstorm.budgetservice.BudgetServiceApplication",
+            "env": {
+                "DATABASE_URL": "jdbc:postgresql://localhost:5433/budget_service",
+                "DATABASE_USERNAME": "your_username",
+                "DATABASE_PASSWORD": "your_password",
+                "EUREKA_URL": "http://localhost:8761/eureka"
+            },
             "projectName": "budget-service",
             "args": "",
             "envFile": "${workspaceFolder}/.env"
