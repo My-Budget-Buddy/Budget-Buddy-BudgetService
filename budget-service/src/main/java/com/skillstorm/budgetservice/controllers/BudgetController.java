@@ -92,6 +92,9 @@ public class BudgetController {
         return ResponseEntity.noContent().build();
     }
 
+    /*
+     * Controller to recieve the budgets a user has for a specific month and year
+     */
     @GetMapping("/monthyear/{monthYear}/user/{userId}")
     public ResponseEntity<List<Budget>> getBudgetsByMonthYear(@PathVariable String monthYear,
             @PathVariable int userId) {
@@ -106,6 +109,11 @@ public class BudgetController {
         return new ResponseEntity<List<Budget>>(budgets, HttpStatus.OK);
     }
 
+    /*
+     * Controller to recieve the transactions a user had for a specific month year
+     * related to categories of budgets
+     * 
+     */
     @GetMapping("transactions/{monthYear}/user/{userId}")
     public ResponseEntity<List<TransactionDTO>> getTranscationsByMonthYear(@PathVariable String monthYear,
             @PathVariable int userId) {
