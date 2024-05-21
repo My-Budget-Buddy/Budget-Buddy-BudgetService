@@ -43,8 +43,8 @@ public class Budget {
     private String category;
 
     @NonNull
-    @Column(name = "spent_amount")
-    private BigDecimal spentAmount;
+    @Column(name = "total_amount")
+    private BigDecimal totalAmount;
 
     @Column(name = "is_reserved")
     private Boolean isReserved;

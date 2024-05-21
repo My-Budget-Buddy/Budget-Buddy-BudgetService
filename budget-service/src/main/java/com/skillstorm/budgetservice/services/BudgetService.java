@@ -63,8 +63,8 @@ public class BudgetService {
             if (budget.getCategory() != null) {
                 existingBudget.setCategory(budget.getCategory());
             }
-            if (budget.getSpentAmount() != null) {
-                existingBudget.setSpentAmount(budget.getSpentAmount());
+            if (budget.getTotalAmount() != null) {
+                existingBudget.setTotalAmount(budget.getTotalAmount());
             }
             if (budget.getIsReserved() != null) {
                 existingBudget.setIsReserved(budget.getIsReserved());

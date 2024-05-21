@@ -41,8 +41,8 @@ public class BudgetTest {
 
     @Test
     void testSpentAmount() {
-        budget.setSpentAmount(new BigDecimal("100.00"));
-        assertEquals(new BigDecimal("100.00"), budget.getSpentAmount());
+        budget.setTotalAmount(new BigDecimal("100.00"));
+        assertEquals(new BigDecimal("100.00"), budget.getTotalAmount());
     }
 
     @Test
@@ -79,7 +79,7 @@ public class BudgetTest {
 
     @Test
     void testNonNullSpentAmount() {
-        assertThrows(NullPointerException.class, () -> budget.setSpentAmount(null));
+        assertThrows(NullPointerException.class, () -> budget.setTotalAmount(null));
     }
 
 }
