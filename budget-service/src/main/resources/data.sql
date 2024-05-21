@@ -6,7 +6,7 @@ INSERT INTO budgets (user_id, category, total_amount, is_reserved, month_year, n
 (3, 'Entertainment', 100.00, FALSE, '2024-05-01', 'Movies and dining out'),
 (3, 'Savings', 500.00, TRUE, '2024-05-01', 'Monthly savings deposit');
 
-INSERT INTO buckets (user_id, bucket_name, amount_reserved, amount_available, month_year, is_reserved, is_active) VALUES
+INSERT INTO buckets (user_id, bucket_name, amount_required, amount_reserved, month_year, is_reserved, is_active) VALUES
 (1, 'Vacation Fund', 2000.00, 500.00, '2024-05-01', FALSE, TRUE),
 (1, 'Emergency Fund', 1000.00, 300.00, '2024-05-01', TRUE, TRUE),
 (2, 'Car Maintenance', 500.00, 100.00, '2024-05-01', FALSE, FALSE),
