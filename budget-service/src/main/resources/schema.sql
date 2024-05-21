@@ -1,3 +1,4 @@
+DROP TABLE IF EXISTS monthly_summary;
 DROP TABLE IF EXISTS buckets;
 DROP TABLE IF EXISTS budgets;
 
@@ -22,4 +23,12 @@ CREATE TABLE buckets (
 	is_reserved BOOLEAN DEFAULT FALSE,
 	is_active BOOLEAN DEFAULT FALSE,
     date_created TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE monthly_summary (
+    summary_id SERIAL PRIMARY KEY,
+    user_id INT NOT NULL,
+    month_year DATE,
+    projected_income NUMERIC(10, 2) NOT NULL,
+    total_budget_amount NUMERIC(10, 2) NOT NULL
 );
