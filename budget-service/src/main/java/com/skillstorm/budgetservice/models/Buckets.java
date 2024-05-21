@@ -38,7 +38,7 @@ public class Buckets {
     private BigDecimal amountRequired;
 
     @Column(nullable = false)
-    private BigDecimal amountAvailable;
+    private BigDecimal amountReserved;
 
     @JsonDeserialize(using = CustomLocalData.class)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM")
@@ -58,12 +58,12 @@ public class Buckets {
     public Buckets() {
     }
 
-    public Buckets(int userId, String bucketName, BigDecimal amountRequired, BigDecimal amountAvailable,
+    public Buckets(int userId, String bucketName, BigDecimal amountRequired, BigDecimal amountReserved,
             LocalDate monthYear, Boolean isReserved, Boolean isActive, LocalDateTime dateCreated) {
         this.userId = userId;
         this.bucketName = bucketName;
         this.amountRequired = amountRequired;
-        this.amountAvailable = amountAvailable;
+        this.amountReserved = amountReserved;
         this.monthYear = monthYear;
         this.isReserved = isReserved;
         this.isActive = isActive;
@@ -110,14 +110,14 @@ public class Buckets {
         this.amountRequired = amountRequired;
     }
 
-    public BigDecimal getAmountAvailable() {
-        return amountAvailable;
+
+    public BigDecimal getAmountReserved() {
+        return amountReserved;
     }
 
-    public void setAmountAvailable(BigDecimal amountAvailable) {
-        this.amountAvailable = amountAvailable;
+    public void setAmountReserved(BigDecimal amountReserved) {
+        this.amountReserved = amountReserved;
     }
-
 
     public LocalDate getMonthYear() {
         return monthYear;

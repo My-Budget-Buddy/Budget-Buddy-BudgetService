@@ -53,8 +53,8 @@ public class BucketsService {
                 bucket.setAmountRequired(bucketDetails.getAmountRequired());
             }
 
-            if (bucketDetails.getAmountAvailable() != null) {
-                bucket.setAmountAvailable(bucketDetails.getAmountAvailable());
+            if (bucketDetails.getAmountReserved() != null) {
+                bucket.setAmountReserved(bucketDetails.getAmountReserved());
             }
 
             if (bucketDetails.getMonthYear() != null) {
