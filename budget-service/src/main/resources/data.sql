@@ -16,8 +16,5 @@ INSERT INTO buckets (user_id, bucket_name, amount_required, amount_available, mo
 
 INSERT INTO monthly_summary (user_id, month_year, projected_income, total_budget_amount) VALUES
 (1, '2024-05-01', 7777.00, 1111.00),
-(1, '2024-05-01', 8888.00, 2222.00),
 (2, '2024-05-01', 9999.00, 3333.00),
-(2, '2024-05-01', 6666.00, 2222.00),
-(3, '2024-05-01', 3333.00, 1111.00),
 (3, '2024-05-01', 9876.00, 999.00);
