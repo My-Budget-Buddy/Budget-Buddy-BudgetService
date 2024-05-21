@@ -3,7 +3,7 @@ DROP TABLE IF EXISTS budgets;
 
 CREATE TABLE budgets (
     budget_id SERIAL PRIMARY KEY,
-    user_id INT NOT NULL REFERENCES users(user_id),
+    user_id INT NOT NULL,
     category VARCHAR(100) NOT NULL,
     spent_amount INT,
 	is_reserved BOOLEAN DEFAULT FALSE,
@@ -14,7 +14,7 @@ CREATE TABLE budgets (
 
 CREATE TABLE buckets (
     bucket_id SERIAL PRIMARY KEY,
-    user_id INT NOT NULL REFERENCES users(user_id),
+    user_id INT NOT NULL,
     bucket_name VARCHAR(100) NOT NULL,
     amount_required NUMERIC(10, 2) NOT NULL,
     amount_available NUMERIC(10, 2) NOT NULL,
