@@ -2,7 +2,7 @@
 
 spring:
   application:
-    name: budget_service
+    name: budget-service
   datasource:
     url: ${DATABASE_URL:jdbc:postgresql://localhost:5433/budget_service}
     username: ${DATABASE_USERNAME:postgres}
