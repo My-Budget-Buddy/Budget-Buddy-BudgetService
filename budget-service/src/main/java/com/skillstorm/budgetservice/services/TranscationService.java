@@ -27,7 +27,7 @@ public class TranscationService {
     public List<TransactionDTO> getTransactionsExcludingIncome(int userId) {
 
         try {
-            ServiceInstance instance = loadBalancerClient.choose("transaction_service");
+            ServiceInstance instance = loadBalancerClient.choose("transaction-service");
                 if (instance != null) {
                     String serviceUrl = instance.getUri().toString();
                     String fullUrl = serviceUrl + "/transactions/budget/" + userId;
