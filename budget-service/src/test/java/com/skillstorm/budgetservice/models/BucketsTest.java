@@ -22,7 +22,7 @@ public class BucketsTest {
         buckets.setUserId(777);
         buckets.setBucketName("Buy Deloitte Stock");
         buckets.setAmountRequired(BigDecimal.valueOf(100000));
-        buckets.setAmountAvailable(BigDecimal.valueOf(100000));
+        buckets.setAmountReserved(BigDecimal.valueOf(100000));
         buckets.setMonthYear(LocalDate.of(2024, 5, 1));
         buckets.setIsReserved(true);
         buckets.setIsActive(true);
@@ -34,7 +34,7 @@ public class BucketsTest {
         assertEquals(777, buckets.getUserId());
         assertEquals("Buy Deloitte Stock", buckets.getBucketName());
         assertEquals(BigDecimal.valueOf(100000), buckets.getAmountRequired());
-        assertEquals(BigDecimal.valueOf(100000), buckets.getAmountAvailable());
+        assertEquals(BigDecimal.valueOf(100000), buckets.getAmountReserved());
         assertEquals(LocalDate.of(2024, 5, 1), buckets.getMonthYear());
         assertEquals(true, buckets.getIsReserved());
         assertEquals(true, buckets.getIsActive());
