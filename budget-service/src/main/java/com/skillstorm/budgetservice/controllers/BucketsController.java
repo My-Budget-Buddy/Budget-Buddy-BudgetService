@@ -32,18 +32,35 @@ public class BucketsController {
         this.bucketsService = bucketsService;
     }
 
+    /**
+     * Retrieves all Bucket objects.
+     *
+     * @return a ResponseEntity containing the list of all Buckets and the HTTP status code
+     */
     @GetMapping("/all")
     public ResponseEntity<List<Buckets>> getAllBuckets() {
         List<Buckets> buckets = bucketsService.getAllBuckets();
         return new ResponseEntity<List<Buckets>>(buckets, HttpStatus.OK);
     }
 
+    /**
+     * Retrieves all Bucket objects associated with a specific user ID.
+     *
+     * @param userId the ID of the user
+     * @return a ResponseEntity containing the list of Buckets for the specified user and the HTTP status code
+     */
     @GetMapping("/user/{userId}")
     public ResponseEntity<List<Buckets>> getAllBucketsByUserId(@PathVariable int userId) {
         List<Buckets> buckets = bucketsService.getAllBucketsByUserId(userId);
         return ResponseEntity.ok(buckets);
     }
 
+    /**
+     * Retrieves a specific Bucket object by its bucket ID.
+     *
+     * @param bucketId the ID of the bucket
+     * @return a ResponseEntity containing the Bucket object and the HTTP status code
+     */
     @GetMapping("/bucket/{bucketId}")
     public ResponseEntity<Buckets> getBucketByBucketId(@PathVariable int bucketId) {
         Optional<Buckets> bucket = bucketsService.getBucketByBucketId(bucketId);
@@ -55,6 +72,13 @@ public class BucketsController {
         }
     }
 
+     /**
+     * Retrieves Bucket objects associated with a specific user ID and month-year.
+     *
+     * @param monthYear the month-year to retrieve the Buckets for
+     * @param userId the ID of the user
+     * @return a ResponseEntity containing the list of Buckets for the specified month-year and user, and the HTTP status code
+     */
     @GetMapping("/monthyear/{monthYear}/user/{userId}")
     public ResponseEntity<List<Buckets>> getBudgetsByMonthYear(@PathVariable String monthYear, @PathVariable int userId) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
@@ -63,12 +87,25 @@ public class BucketsController {
         return ResponseEntity.ok(budgets);
     }
 
+    /**
+     * Adds a new Bucket object.
+     *
+     * @param bucket the Bucket object to add
+     * @return a ResponseEntity containing the added Bucket object and the HTTP status code
+     */
     @PostMapping("/add")
     public ResponseEntity<Buckets> addBucket(@RequestBody Buckets bucket) {
         Buckets newBucket = bucketsService.saveBucket(bucket);
         return ResponseEntity.status(HttpStatus.CREATED).body(newBucket);
     }
 
+    /**
+     * Updates an existing Bucket object.
+     *
+     * @param bucketId the ID of the bucket to update
+     * @param bucketDetails the updated details of the bucket
+     * @return a ResponseEntity containing the updated Bucket object and the HTTP status code
+     */
     @PutMapping("/update/{bucketId}")
     public ResponseEntity<Buckets> updateBucket(@PathVariable int bucketId, @RequestBody Buckets bucketDetails) {
         try {
@@ -79,10 +116,28 @@ public class BucketsController {
         }
     }
 
+     /**
+     * Deletes a specific Bucket object by its bucket ID.
+     *
+     * @param bucketId the ID of the bucket to delete
+     * @return a ResponseEntity containing a message indicating the bucket is deleted and the HTTP status code
+     */
     @DeleteMapping("/delete/{bucketId}")
     public ResponseEntity<String> deleteBucket(@PathVariable int bucketId) {
         bucketsService.deleteBucket(bucketId);
         return ResponseEntity.ok("The bucket is deleted");
+    }
+
+    /**
+     * Deletes all Bucket objects associated with a specific user ID.
+     *
+     * @param userId the ID of the user
+     * @return a ResponseEntity containing a message indicating the buckets are deleted and the HTTP status code
+     */
+    @DeleteMapping("/deleteAll/user/{userId}")
+    public ResponseEntity<String> deleteAllBucketsByUserId(@PathVariable int userId) {
+        bucketsService.deleteAllBucketsByUserId(userId);
+        return ResponseEntity.ok("All buckets related to the user are deleted");
     }
 
 }

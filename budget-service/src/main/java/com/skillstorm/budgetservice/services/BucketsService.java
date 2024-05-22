@@ -19,26 +19,63 @@ public class BucketsService {
         this.bucketsRepository = bucketsRepository;
     }
 
+    /**
+     * Retrieves all Bucket objects.
+     *
+     * @return a list of all Bucket objects
+     */
     public List<Buckets> getAllBuckets() {
         return bucketsRepository.findAll();
     }
 
+    /**
+     * Retrieves all Bucket objects associated with a specific user ID.
+     *
+     * @param userId the ID of the user
+     * @return a list of Bucket objects for the specified user
+     */
     public List<Buckets> getAllBucketsByUserId(int userId) {
         return bucketsRepository.findByUserId(userId);
     }
 
+     /**
+     * Retrieves a specific Bucket object by its bucket ID.
+     *
+     * @param bucketId the ID of the bucket
+     * @return an Optional containing the Bucket object, if found
+     */
     public Optional<Buckets> getBucketByBucketId(int bucketId) {
         return bucketsRepository.findById(bucketId);
     }
 
+    /**
+     * Retrieves Bucket objects associated with a specific user ID and month-year.
+     *
+     * @param monthYear the month-year in LocalDate format
+     * @param userId the ID of the user
+     * @return a list of Bucket objects for the specified month-year and user
+     */
     public List<Buckets> getBudgetsByMonthYearAndUserId(LocalDate monthYear, int userId) {
         return bucketsRepository.findByMonthYearAndUserId(monthYear, userId);
     }
 
+    /**
+     * Saves a new Bucket object.
+     *
+     * @param bucket the Bucket object to save
+     * @return the saved Bucket object
+     */
     public Buckets saveBucket(Buckets bucket) {
         return bucketsRepository.save(bucket);
     }
 
+    /**
+     * Updates an existing Bucket object.
+     *
+     * @param bucketId the ID of the bucket to update
+     * @param bucketDetails the updated details of the bucket
+     * @return the updated Bucket object
+     */
     public Buckets updateBucket(int bucketId, Buckets bucketDetails) {
         Optional<Buckets> existingBucket = bucketsRepository.findById(bucketId);
 
@@ -80,7 +117,21 @@ public class BucketsService {
 
     }
 
+    /**
+     * Deletes a specific Bucket object by its bucket ID.
+     *
+     * @param bucketId the ID of the bucket to delete
+     */
     public void deleteBucket(int bucketId) {
         bucketsRepository.deleteById(bucketId);
+    }
+
+    /**
+     * Deletes all Bucket objects associated with a specific user ID.
+     *
+     * @param userId the ID of the user
+     */
+    public void deleteAllBucketsByUserId(int userId) {
+        bucketsRepository.deleteAllBucketsByUserId(userId);
     }
 }
