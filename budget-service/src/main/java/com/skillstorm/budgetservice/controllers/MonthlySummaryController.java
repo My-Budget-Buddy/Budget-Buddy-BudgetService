@@ -113,7 +113,7 @@ public class MonthlySummaryController {
      * Controller to delete all monthly summarys associated with a userId
      * 
      */
-    @DeleteMapping("deleteAll/{id}")
+    @DeleteMapping("deleteAll/user/{id}")
     public ResponseEntity<MonthlySummary> deleteAllSummarysByUserId(@PathVariable int id) {
         monthlySummaryService.deleteAllSummarysByUserId(id);
         return ResponseEntity.noContent().build();

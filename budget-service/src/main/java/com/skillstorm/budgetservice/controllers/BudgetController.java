@@ -132,7 +132,7 @@ public class BudgetController {
      * Controller to delete all budgets associated with a userId
      * 
      */
-    @DeleteMapping("deleteAll/{id}")
+    @DeleteMapping("deleteAll/user/{id}")
     public ResponseEntity<Budget> deleteAllBudgetsByUserId(@PathVariable int id) {
         budgetService.deleteAllBudgetsByUserId(id);
         return ResponseEntity.noContent().build();
