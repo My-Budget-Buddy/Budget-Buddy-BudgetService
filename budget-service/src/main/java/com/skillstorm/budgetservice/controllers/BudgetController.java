@@ -128,4 +128,14 @@ public class BudgetController {
         return new ResponseEntity<List<TransactionDTO>>(transactions, HttpStatus.OK);
     }
 
+    /*
+     * Controller to delete all budgets associated with a userId
+     * 
+     */
+    @DeleteMapping("deleteAll/{id}")
+    public ResponseEntity<Budget> deleteAllBudgetsByUserId(@PathVariable int id) {
+        budgetService.deleteAllBudgetsByUserId(id);
+        return ResponseEntity.noContent().build();
+    }
+
 }

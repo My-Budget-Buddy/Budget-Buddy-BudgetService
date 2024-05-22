@@ -92,10 +92,20 @@ public class BudgetService {
         budgetRepository.deleteById(id);
     }
 
+    /**
+     * Get all budgets for a user by date
+     * 
+     * 
+     */
     public List<Budget> getBudgetsByMonthYearAndUserId(LocalDate date, int userId) {
         return budgetRepository.findByMonthYearAndUserId(date, userId);
     }
 
+    /**
+     * Get all transactions related to budget categories for a user by date
+     * 
+     * 
+     */
     public List<TransactionDTO> findTransactionByMonthYear(LocalDate monthYear, int userId) {
         // Retrieve all transactions for the given user, excluding income transactions
         List<TransactionDTO> transactions = transcationService.getTransactionsExcludingIncome(userId);
@@ -111,5 +121,14 @@ public class BudgetService {
                 .collect(Collectors.toList());
 
         return filteredTransactions;
+    }
+
+    /**
+     * Deletes all budgets by user ID.
+     *
+     * @param id the ID of the user
+     */
+    public void deleteAllBudgetsByUserId(int id) {
+        budgetRepository.deleteAllBudgetsByUserId(id);
     }
 }
