@@ -89,4 +89,13 @@ public class MonthlySummaryService {
         return monthlySummaryRepository.findByMonthYearAndUserId(date, userId);
     }
 
+    /**
+     * Deletes all monthly summarys by user ID.
+     *
+     * @param id the ID of the user
+     */
+    public void deleteAllSummarysByUserId(int id) {
+        monthlySummaryRepository.deleteAllSummarysByUserId(id);
+    }
+
 }

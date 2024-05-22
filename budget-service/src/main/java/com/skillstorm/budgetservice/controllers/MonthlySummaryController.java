@@ -109,4 +109,14 @@ public class MonthlySummaryController {
         return new ResponseEntity<List<MonthlySummary>>(summarys, HttpStatus.OK);
     }
 
+    /*
+     * Controller to delete all monthly summarys associated with a userId
+     * 
+     */
+    @DeleteMapping("deleteAll/{id}")
+    public ResponseEntity<MonthlySummary> deleteAllSummarysByUserId(@PathVariable int id) {
+        monthlySummaryService.deleteAllSummarysByUserId(id);
+        return ResponseEntity.noContent().build();
+    }
+
 }
