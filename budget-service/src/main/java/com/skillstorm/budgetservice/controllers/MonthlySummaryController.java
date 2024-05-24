@@ -49,7 +49,7 @@ public class MonthlySummaryController {
      */
     @GetMapping("/{id}")
     public ResponseEntity<List<MonthlySummary>> getSummarysById(@PathVariable int id,
-            @RequestHeader(name = "ID") String headerUserId) {
+            @RequestHeader(name = "User-ID") String headerUserId) {
 
         monthlySummaryService.compareHeaderIdWithRequestedDataId(id, headerUserId);
         List<MonthlySummary> summarys = monthlySummaryService.findMonthlySummarysByUserId(id);
@@ -78,7 +78,7 @@ public class MonthlySummaryController {
      */
     @PutMapping("/{id}")
     public ResponseEntity<MonthlySummary> editMonthlySummary(@PathVariable int id,
-            @RequestBody MonthlySummary monthlySummary, @RequestHeader(name = "ID") String headerUserId) {
+            @RequestBody MonthlySummary monthlySummary, @RequestHeader(name = "User-ID") String headerUserId) {
 
         monthlySummaryService.compareHeaderIdWithRequestedDataId(id, headerUserId);
 
@@ -104,7 +104,7 @@ public class MonthlySummaryController {
      */
     @GetMapping("/monthyear/{monthYear}/user/{userId}")
     public ResponseEntity<List<MonthlySummary>> getSummarysByMonthYear(@PathVariable String monthYear,
-            @PathVariable int userId, @RequestHeader(name = "ID") String headerUserId) {
+            @PathVariable int userId, @RequestHeader(name = "User-ID") String headerUserId) {
 
         monthlySummaryService.compareHeaderIdWithRequestedDataId(userId, headerUserId);
 
@@ -125,7 +125,7 @@ public class MonthlySummaryController {
      */
     @DeleteMapping("deleteAll/user/{id}")
     public ResponseEntity<MonthlySummary> deleteAllSummarysByUserId(@PathVariable int id,
-            @RequestHeader(name = "ID") String headerUserId) {
+            @RequestHeader(name = "User-ID") String headerUserId) {
 
         monthlySummaryService.compareHeaderIdWithRequestedDataId(id, headerUserId);
 
