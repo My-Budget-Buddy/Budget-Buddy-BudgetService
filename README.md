@@ -15,7 +15,7 @@ The Budget Service is a backend microservice for the Budget Buddy application. T
 ## Author
 
 - [**Eric Chang**](https://github.com/ESC8504)
-- [**Rob Hardial**](https://github.com/robhardial)
+- [**Robert Hardial**](https://github.com/robhardial)
 
 ## Built With
 ![](https://img.shields.io/badge/-Java-007396?style=flat-square&logo=java&logoColor=white)
