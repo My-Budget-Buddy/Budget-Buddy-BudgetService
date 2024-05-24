@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -48,7 +49,9 @@ public class BudgetController {
      * @return a ResponseEntity containing the Budgets list and the HTTP status code
      */
     @GetMapping("/{id}")
-    public ResponseEntity<List<Budget>> getBudgetsById(@PathVariable int id) {
+    public ResponseEntity<List<Budget>> getBudgetsById(@PathVariable int id, @RequestHeader String headerUserId) {
+
+        budgetService.compareHeaderIdWithRequestedDataId(id, headerUserId);
         List<Budget> budgets = budgetService.findBudgetsByUserId(id);
         return new ResponseEntity<List<Budget>>(budgets, HttpStatus.OK);
     }
@@ -74,7 +77,10 @@ public class BudgetController {
      * @return the updated Budget object
      */
     @PutMapping("/{id}")
-    public ResponseEntity<Budget> editBudget(@PathVariable int id, @RequestBody Budget budget) {
+    public ResponseEntity<Budget> editBudget(@PathVariable int id, @RequestBody Budget budget,
+            @RequestHeader String headerUserId) {
+
+        budgetService.compareHeaderIdWithRequestedDataId(id, headerUserId);
         Budget updatedBudget = budgetService.editBudget(id, budget);
         return new ResponseEntity<Budget>(updatedBudget, HttpStatus.OK);
     }
@@ -87,7 +93,9 @@ public class BudgetController {
      *         status code/monthyear/{monthYear}/user/{userId}
      */
     @DeleteMapping("/{id}")
-    public ResponseEntity<Budget> deleteBudget(@PathVariable int id) {
+    public ResponseEntity<Budget> deleteBudget(@PathVariable int id, @RequestHeader String headerUserId) {
+
+        budgetService.compareHeaderIdWithRequestedDataId(id, headerUserId);
         budgetService.deleteBudgetById(id);
         return ResponseEntity.noContent().build();
     }
@@ -97,7 +105,9 @@ public class BudgetController {
      */
     @GetMapping("/monthyear/{monthYear}/user/{userId}")
     public ResponseEntity<List<Budget>> getBudgetsByMonthYear(@PathVariable String monthYear,
-            @PathVariable int userId) {
+            @PathVariable int userId, @RequestHeader String headerUserId) {
+
+        budgetService.compareHeaderIdWithRequestedDataId(userId, headerUserId);
         // Define a DateTimeFormatter to parse the date in the format yyyy-MM-dd
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
@@ -116,8 +126,9 @@ public class BudgetController {
      */
     @GetMapping("transactions/{monthYear}/user/{userId}")
     public ResponseEntity<List<TransactionDTO>> getTranscationsByMonthYear(@PathVariable String monthYear,
-            @PathVariable int userId) {
+            @PathVariable int userId, @RequestHeader String headerUserId) {
 
+        budgetService.compareHeaderIdWithRequestedDataId(userId, headerUserId);
         // Define a DateTimeFormatter to parse the date in the format yyyy-MM-dd
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
@@ -133,7 +144,9 @@ public class BudgetController {
      * 
      */
     @DeleteMapping("deleteAll/user/{id}")
-    public ResponseEntity<Budget> deleteAllBudgetsByUserId(@PathVariable int id) {
+    public ResponseEntity<Budget> deleteAllBudgetsByUserId(@PathVariable int id, @RequestHeader String headerUserId) {
+
+        budgetService.compareHeaderIdWithRequestedDataId(id, headerUserId);
         budgetService.deleteAllBudgetsByUserId(id);
         return ResponseEntity.noContent().build();
     }
