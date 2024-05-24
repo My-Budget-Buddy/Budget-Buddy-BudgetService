@@ -1,4 +1,4 @@
-package com.skillstorm.exceptions;
+package com.skillstorm.budgetservice.exceptions;
 
 public class IdMismatchException extends RuntimeException {
 

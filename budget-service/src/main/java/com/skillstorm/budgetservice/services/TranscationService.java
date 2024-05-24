@@ -28,20 +28,21 @@ public class TranscationService {
 
         try {
             ServiceInstance instance = loadBalancerClient.choose("transaction-service");
-                if (instance != null) {
-                    String serviceUrl = instance.getUri().toString();
-                    String fullUrl = serviceUrl + "/transactions/budget/" + userId;
+            if (instance != null) {
+                String serviceUrl = instance.getUri().toString();
+                String fullUrl = serviceUrl + "/transactionsPrivate/budget/" + userId;
 
-                    return restClient.get()
-                                    .uri(fullUrl)
-                                    .retrieve()
-                                    .body(new ParameterizedTypeReference<List<TransactionDTO>>() {});
-                } else {
-                    throw new IllegalStateException("No instances available for transaction_service");
-                }
-            } catch (HttpClientErrorException e) {
-                return new ArrayList<>(0);
+                return restClient.get()
+                        .uri(fullUrl)
+                        .retrieve()
+                        .body(new ParameterizedTypeReference<List<TransactionDTO>>() {
+                        });
+            } else {
+                throw new IllegalStateException("No instances available for transaction_service");
             }
+        } catch (HttpClientErrorException e) {
+            return new ArrayList<>(0);
+        }
     }
 
 }
