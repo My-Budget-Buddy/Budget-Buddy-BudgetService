@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -47,7 +48,10 @@ public class MonthlySummaryController {
      *         code
      */
     @GetMapping("/{id}")
-    public ResponseEntity<List<MonthlySummary>> getSummarysById(@PathVariable int id) {
+    public ResponseEntity<List<MonthlySummary>> getSummarysById(@PathVariable int id,
+            @RequestHeader(name = "ID") String headerUserId) {
+
+        monthlySummaryService.compareHeaderIdWithRequestedDataId(id, headerUserId);
         List<MonthlySummary> summarys = monthlySummaryService.findMonthlySummarysByUserId(id);
         return new ResponseEntity<List<MonthlySummary>>(summarys, HttpStatus.OK);
     }
@@ -74,7 +78,10 @@ public class MonthlySummaryController {
      */
     @PutMapping("/{id}")
     public ResponseEntity<MonthlySummary> editMonthlySummary(@PathVariable int id,
-            @RequestBody MonthlySummary monthlySummary) {
+            @RequestBody MonthlySummary monthlySummary, @RequestHeader(name = "ID") String headerUserId) {
+
+        monthlySummaryService.compareHeaderIdWithRequestedDataId(id, headerUserId);
+
         MonthlySummary updatedMonthlySummary = monthlySummaryService.editMonthlySummary(id, monthlySummary);
         return new ResponseEntity<MonthlySummary>(updatedMonthlySummary, HttpStatus.OK);
     }
@@ -97,7 +104,10 @@ public class MonthlySummaryController {
      */
     @GetMapping("/monthyear/{monthYear}/user/{userId}")
     public ResponseEntity<List<MonthlySummary>> getSummarysByMonthYear(@PathVariable String monthYear,
-            @PathVariable int userId) {
+            @PathVariable int userId, @RequestHeader(name = "ID") String headerUserId) {
+
+        monthlySummaryService.compareHeaderIdWithRequestedDataId(userId, headerUserId);
+
         // Define a DateTimeFormatter to parse the date in the format yyyy-MM-dd
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
@@ -114,7 +124,11 @@ public class MonthlySummaryController {
      * 
      */
     @DeleteMapping("deleteAll/user/{id}")
-    public ResponseEntity<MonthlySummary> deleteAllSummarysByUserId(@PathVariable int id) {
+    public ResponseEntity<MonthlySummary> deleteAllSummarysByUserId(@PathVariable int id,
+            @RequestHeader(name = "ID") String headerUserId) {
+
+        monthlySummaryService.compareHeaderIdWithRequestedDataId(id, headerUserId);
+
         monthlySummaryService.deleteAllSummarysByUserId(id);
         return ResponseEntity.noContent().build();
     }
