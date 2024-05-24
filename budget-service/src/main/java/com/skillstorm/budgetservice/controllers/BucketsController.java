@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import java.time.format.DateTimeFormatter;
@@ -47,10 +48,12 @@ public class BucketsController {
      * Retrieves all Bucket objects associated with a specific user ID.
      *
      * @param userId the ID of the user
+     * @param headerUserId the user ID from the request header
      * @return a ResponseEntity containing the list of Buckets for the specified user and the HTTP status code
      */
     @GetMapping("/user/{userId}")
-    public ResponseEntity<List<Buckets>> getAllBucketsByUserId(@PathVariable int userId) {
+    public ResponseEntity<List<Buckets>> getAllBucketsByUserId(@PathVariable int userId, @RequestHeader String headerUserId){
+        bucketsService.compareHeaderIdWithRequestedDataId(userId, headerUserId);
         List<Buckets> buckets = bucketsService.getAllBucketsByUserId(userId);
         return ResponseEntity.ok(buckets);
     }
@@ -77,10 +80,12 @@ public class BucketsController {
      *
      * @param monthYear the month-year to retrieve the Buckets for
      * @param userId the ID of the user
+     * @param headerUserId the user ID from the request header
      * @return a ResponseEntity containing the list of Buckets for the specified month-year and user, and the HTTP status code
      */
     @GetMapping("/monthyear/{monthYear}/user/{userId}")
-    public ResponseEntity<List<Buckets>> getBudgetsByMonthYear(@PathVariable String monthYear, @PathVariable int userId) {
+    public ResponseEntity<List<Buckets>> getBudgetsByMonthYear(@PathVariable String monthYear, @PathVariable int userId, @RequestHeader("ID") String headerUserId) {
+        bucketsService.compareHeaderIdWithRequestedDataId(userId, headerUserId);
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         LocalDate date = LocalDate.parse(monthYear + "-01", formatter); // This is to make sure the date is in the format of yyyy-MM-dd for local date
         List<Buckets> budgets = bucketsService.getBudgetsByMonthYearAndUserId(date, userId);
@@ -104,11 +109,13 @@ public class BucketsController {
      *
      * @param bucketId the ID of the bucket to update
      * @param bucketDetails the updated details of the bucket
+     * @param headerUserId the user ID from the request header
      * @return a ResponseEntity containing the updated Bucket object and the HTTP status code
      */
     @PutMapping("/update/{bucketId}")
-    public ResponseEntity<Buckets> updateBucket(@PathVariable int bucketId, @RequestBody Buckets bucketDetails) {
+    public ResponseEntity<Buckets> updateBucket(@PathVariable int bucketId, @RequestBody Buckets bucketDetails, @RequestHeader("ID") String headerUserId) {
         try {
+            bucketsService.compareHeaderIdWithRequestedDataId(bucketDetails.getUserId(), headerUserId);
             Buckets updatedBucket = bucketsService.updateBucket(bucketId, bucketDetails);
             return ResponseEntity.ok(updatedBucket);
         } catch (RuntimeException e) {
@@ -132,10 +139,12 @@ public class BucketsController {
      * Deletes all Bucket objects associated with a specific user ID.
      *
      * @param userId the ID of the user
+     * @param headerUserId the user ID from the request header
      * @return a ResponseEntity containing a message indicating the buckets are deleted and the HTTP status code
      */
     @DeleteMapping("/deleteAll/user/{userId}")
-    public ResponseEntity<String> deleteAllBucketsByUserId(@PathVariable int userId) {
+    public ResponseEntity<String> deleteAllBucketsByUserId(@PathVariable int userId, @RequestHeader("ID") String headerUserId) {
+        bucketsService.compareHeaderIdWithRequestedDataId(userId, headerUserId);
         bucketsService.deleteAllBucketsByUserId(userId);
         return ResponseEntity.ok("All buckets related to the user are deleted");
     }
