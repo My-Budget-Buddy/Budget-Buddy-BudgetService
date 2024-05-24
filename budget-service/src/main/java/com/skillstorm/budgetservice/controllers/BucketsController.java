@@ -52,7 +52,7 @@ public class BucketsController {
      * @return a ResponseEntity containing the list of Buckets for the specified user and the HTTP status code
      */
     @GetMapping("/user/{userId}")
-    public ResponseEntity<List<Buckets>> getAllBucketsByUserId(@PathVariable int userId, @RequestHeader String headerUserId){
+    public ResponseEntity<List<Buckets>> getAllBucketsByUserId(@PathVariable int userId, @RequestHeader(name = "User-ID") String headerUserId){
         bucketsService.compareHeaderIdWithRequestedDataId(userId, headerUserId);
         List<Buckets> buckets = bucketsService.getAllBucketsByUserId(userId);
         return ResponseEntity.ok(buckets);
@@ -84,7 +84,7 @@ public class BucketsController {
      * @return a ResponseEntity containing the list of Buckets for the specified month-year and user, and the HTTP status code
      */
     @GetMapping("/monthyear/{monthYear}/user/{userId}")
-    public ResponseEntity<List<Buckets>> getBudgetsByMonthYear(@PathVariable String monthYear, @PathVariable int userId, @RequestHeader("ID") String headerUserId) {
+    public ResponseEntity<List<Buckets>> getBudgetsByMonthYear(@PathVariable String monthYear, @PathVariable int userId, @RequestHeader(name = "User-ID") String headerUserId) {
         bucketsService.compareHeaderIdWithRequestedDataId(userId, headerUserId);
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         LocalDate date = LocalDate.parse(monthYear + "-01", formatter); // This is to make sure the date is in the format of yyyy-MM-dd for local date
@@ -113,7 +113,7 @@ public class BucketsController {
      * @return a ResponseEntity containing the updated Bucket object and the HTTP status code
      */
     @PutMapping("/update/{bucketId}")
-    public ResponseEntity<Buckets> updateBucket(@PathVariable int bucketId, @RequestBody Buckets bucketDetails, @RequestHeader("ID") String headerUserId) {
+    public ResponseEntity<Buckets> updateBucket(@PathVariable int bucketId, @RequestBody Buckets bucketDetails, @RequestHeader(name = "User-ID") String headerUserId) {
         try {
             bucketsService.compareHeaderIdWithRequestedDataId(bucketDetails.getUserId(), headerUserId);
             Buckets updatedBucket = bucketsService.updateBucket(bucketId, bucketDetails);
@@ -143,7 +143,7 @@ public class BucketsController {
      * @return a ResponseEntity containing a message indicating the buckets are deleted and the HTTP status code
      */
     @DeleteMapping("/deleteAll/user/{userId}")
-    public ResponseEntity<String> deleteAllBucketsByUserId(@PathVariable int userId, @RequestHeader("ID") String headerUserId) {
+    public ResponseEntity<String> deleteAllBucketsByUserId(@PathVariable int userId, @RequestHeader(name = "User-ID") String headerUserId) {
         bucketsService.compareHeaderIdWithRequestedDataId(userId, headerUserId);
         bucketsService.deleteAllBucketsByUserId(userId);
         return ResponseEntity.ok("All buckets related to the user are deleted");
