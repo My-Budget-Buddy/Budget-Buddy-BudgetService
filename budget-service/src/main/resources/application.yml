@@ -1,5 +1,7 @@
 #Tell Spring where to get the data from
-
+server:
+    port: 8083
+    
 spring:
   application:
     name: budget-service
