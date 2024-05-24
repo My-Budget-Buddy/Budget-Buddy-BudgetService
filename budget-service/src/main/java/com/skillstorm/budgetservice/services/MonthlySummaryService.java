@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import com.skillstorm.budgetservice.models.Budget;
 import com.skillstorm.budgetservice.models.MonthlySummary;
 import com.skillstorm.budgetservice.repositories.MonthlySummaryRepository;
+import com.skillstorm.exceptions.IdMismatchException;
 
 @Service
 public class MonthlySummaryService {
@@ -96,6 +97,16 @@ public class MonthlySummaryService {
      */
     public void deleteAllSummarysByUserId(int id) {
         monthlySummaryRepository.deleteAllSummarysByUserId(id);
+    }
+
+    // This method checks to make sure that the user is retrieving or updating
+    // information that relates to their own account. This prevents a user with an
+    // ID of 1 from updating the data of a different user
+    public void compareHeaderIdWithRequestedDataId(int userId, String headerUserId) {
+
+        if (userId != Integer.valueOf(headerUserId)) {
+            throw new IdMismatchException();
+        }
     }
 
 }
