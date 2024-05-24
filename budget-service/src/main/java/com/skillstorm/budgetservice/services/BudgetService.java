@@ -12,6 +12,7 @@ import com.skillstorm.budgetservice.dto.TransactionDTO;
 import com.skillstorm.budgetservice.models.Buckets;
 import com.skillstorm.budgetservice.models.Budget;
 import com.skillstorm.budgetservice.repositories.BudgetRepository;
+import com.skillstorm.exceptions.IdMismatchException;
 
 @Service
 public class BudgetService {
@@ -130,5 +131,15 @@ public class BudgetService {
      */
     public void deleteAllBudgetsByUserId(int id) {
         budgetRepository.deleteAllBudgetsByUserId(id);
+    }
+
+    // This method checks to make sure that the user is retrieving or updating
+    // information that relates to their own account. This prevents a user with an
+    // ID of 1 from updating the data of a different user
+    public void compareHeaderIdWithRequestedDataId(int userId, String headerUserId) {
+
+        if (userId != Integer.valueOf(headerUserId)) {
+            throw new IdMismatchException();
+        }
     }
 }
