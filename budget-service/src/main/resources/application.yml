@@ -1,6 +1,6 @@
 #Tell Spring where to get the data from
 server:
-    port: 8083
+    port: 8082
     
 spring:
   application:
