@@ -1,5 +1,5 @@
 # Budget-Buddy-BudgetService
-Welcome to the Budget Service of the Budget Buddy application. This microservice is responsible for managing user budgets and buckets, providing essential endpoints for budget and bucket operations. Below is an overview of the project, including its purpose, functionality, and the technologies used.
+Welcome to the Budget Service of the Budget Buddy application. This microservice is responsible for managing user budgets, monthly summaries, and buckets, providing essential endpoints for budget, monthly summary, and bucket operations. Below is an overview of the project, including its purpose, functionality, and the technologies used.
 
 
 ## Table of Contents
