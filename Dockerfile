@@ -1,6 +1,6 @@
 FROM public.ecr.aws/c1x4i8c4/alpine:latest as build
 WORKDIR /app
-COPY budget-service/* /app
+COPY budget-service/ /app
 RUN apk update && apk upgrade && apk add openjdk17-jdk maven && mvn clean package -DskipTests
 
 FROM public.ecr.aws/c1x4i8c4/alpine:latest
