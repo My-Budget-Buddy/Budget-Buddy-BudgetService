@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.skillstorm.budgetservice.dto.TransactionDTO;
-import com.skillstorm.budgetservice.exceptions.IdMismatchException;
 import com.skillstorm.budgetservice.models.Buckets;
 import com.skillstorm.budgetservice.models.Budget;
 import com.skillstorm.budgetservice.repositories.BudgetRepository;
@@ -43,8 +42,28 @@ public class BudgetService {
      * @param user The budget to be saved.
      * @return The saved budget.
      */
-    public Budget saveBudget(Budget budget) {
-        return budgetRepository.save(budget);
+    public Budget saveBudget(Budget budget, Integer headerUserId) {
+        Budget newBudget = new Budget();
+
+        newBudget.setUserId(headerUserId);
+
+        if (budget.getCategory() != null) {
+            newBudget.setCategory(budget.getCategory());
+        }
+        if (budget.getTotalAmount() != null) {
+            newBudget.setTotalAmount(budget.getTotalAmount());
+        }
+        if (budget.getIsReserved() != null) {
+            newBudget.setIsReserved(budget.getIsReserved());
+        }
+        if (budget.getMonthYear() != null) {
+            newBudget.setMonthYear(budget.getMonthYear());
+        }
+        if (budget.getNotes() != null) {
+            newBudget.setNotes(budget.getNotes());
+        }
+
+        return budgetRepository.save(newBudget);
     }
 
     /**
@@ -133,13 +152,4 @@ public class BudgetService {
         budgetRepository.deleteAllBudgetsByUserId(id);
     }
 
-    // This method checks to make sure that the user is retrieving or updating
-    // information that relates to their own account. This prevents a user with an
-    // ID of 1 from updating the data of a different user
-    public void compareHeaderIdWithRequestedDataId(int userId, String headerUserId) {
-
-        if (userId != Integer.valueOf(headerUserId)) {
-            throw new IdMismatchException();
-        }
-    }
 }

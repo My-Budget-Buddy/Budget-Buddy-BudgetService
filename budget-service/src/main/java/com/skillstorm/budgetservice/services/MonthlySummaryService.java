@@ -7,7 +7,6 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.skillstorm.budgetservice.exceptions.IdMismatchException;
 import com.skillstorm.budgetservice.models.Budget;
 import com.skillstorm.budgetservice.models.MonthlySummary;
 import com.skillstorm.budgetservice.repositories.MonthlySummaryRepository;
@@ -36,11 +35,26 @@ public class MonthlySummaryService {
     /**
      * Saves the given monthly summary into the repository.
      *
-     * @param user The monthly summary to be saved.
+     * @param monthlySummary The monthly summary to be saved.
      * @return The saved monthly summary.
      */
-    public MonthlySummary saveMonthlySummary(MonthlySummary monthlySummary) {
-        return monthlySummaryRepository.save(monthlySummary);
+    public MonthlySummary saveMonthlySummary(MonthlySummary monthlySummary, Integer headerUserId) {
+
+        MonthlySummary newMonthlySummary = new MonthlySummary();
+
+        newMonthlySummary.setUserId(headerUserId);
+
+        if (monthlySummary.getProjectedIncome() != null) {
+            newMonthlySummary.setProjectedIncome(monthlySummary.getProjectedIncome());
+        }
+        if (monthlySummary.getMonthYear() != null) {
+            newMonthlySummary.setMonthYear(monthlySummary.getMonthYear());
+        }
+        if (monthlySummary.getTotalBudgetAmount() != null) {
+            newMonthlySummary.setTotalBudgetAmount(monthlySummary.getTotalBudgetAmount());
+        }
+
+        return monthlySummaryRepository.save(newMonthlySummary);
     }
 
     /**
@@ -97,16 +111,6 @@ public class MonthlySummaryService {
      */
     public void deleteAllSummarysByUserId(int id) {
         monthlySummaryRepository.deleteAllSummarysByUserId(id);
-    }
-
-    // This method checks to make sure that the user is retrieving or updating
-    // information that relates to their own account. This prevents a user with an
-    // ID of 1 from updating the data of a different user
-    public void compareHeaderIdWithRequestedDataId(int userId, String headerUserId) {
-
-        if (userId != Integer.valueOf(headerUserId)) {
-            throw new IdMismatchException();
-        }
     }
 
 }

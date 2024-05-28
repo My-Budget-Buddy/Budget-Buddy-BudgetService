@@ -41,31 +41,31 @@ public class MonthlySummaryController {
     }
 
     /**
-     * Retrieves the Summary objects associated with the given ID.
+     * Retrieves the Summary objects associated with the given headerUserId.
      *
-     * @param id the ID of the user
+     * @param headerUserId the ID of the user
      * @return a ResponseEntity containing the Summarys list and the HTTP status
      *         code
      */
-    @GetMapping("/{id}")
-    public ResponseEntity<List<MonthlySummary>> getSummarysById(@PathVariable int id,
-            @RequestHeader(name = "User-ID") String headerUserId) {
+    @GetMapping("/userSummarys")
+    public ResponseEntity<List<MonthlySummary>> getSummarysById(
+            @RequestHeader(name = "User-ID") Integer headerUserId) {
 
-        monthlySummaryService.compareHeaderIdWithRequestedDataId(id, headerUserId);
-        List<MonthlySummary> summarys = monthlySummaryService.findMonthlySummarysByUserId(id);
+        List<MonthlySummary> summarys = monthlySummaryService.findMonthlySummarysByUserId(headerUserId);
         return new ResponseEntity<List<MonthlySummary>>(summarys, HttpStatus.OK);
     }
 
     /**
      * Creates a new summary by saving the provided Monthly Summary object.
      *
-     * @param budget The Summary object to be created.
+     * @param monthlySummary The Summary object to be created.
      * @return A ResponseEntity object containing the created summary and the HTTP
      *         status code.
      */
     @PostMapping
-    public ResponseEntity<MonthlySummary> createMonthlySummary(@RequestBody MonthlySummary monthlySummary) {
-        MonthlySummary newSummary = monthlySummaryService.saveMonthlySummary(monthlySummary);
+    public ResponseEntity<MonthlySummary> createMonthlySummary(@RequestBody MonthlySummary monthlySummary,
+            @RequestHeader(name = "User-ID") Integer headerUserId) {
+        MonthlySummary newSummary = monthlySummaryService.saveMonthlySummary(monthlySummary, headerUserId);
         return new ResponseEntity<MonthlySummary>(newSummary, HttpStatus.CREATED);
     }
 
@@ -78,9 +78,7 @@ public class MonthlySummaryController {
      */
     @PutMapping("/{id}")
     public ResponseEntity<MonthlySummary> editMonthlySummary(@PathVariable int id,
-            @RequestBody MonthlySummary monthlySummary, @RequestHeader(name = "User-ID") String headerUserId) {
-
-        monthlySummaryService.compareHeaderIdWithRequestedDataId(id, headerUserId);
+            @RequestBody MonthlySummary monthlySummary, @RequestHeader(name = "User-ID") Integer headerUserId) {
 
         MonthlySummary updatedMonthlySummary = monthlySummaryService.editMonthlySummary(id, monthlySummary);
         return new ResponseEntity<MonthlySummary>(updatedMonthlySummary, HttpStatus.OK);
@@ -100,13 +98,11 @@ public class MonthlySummaryController {
     }
 
     /*
-     * Controller to recieve the summarys a user has for a specific month and year
+     * Controller to receive the summarys a user has for a specific month and year
      */
-    @GetMapping("/monthyear/{monthYear}/user/{userId}")
+    @GetMapping("/monthyear/{monthYear}")
     public ResponseEntity<List<MonthlySummary>> getSummarysByMonthYear(@PathVariable String monthYear,
-            @PathVariable int userId, @RequestHeader(name = "User-ID") String headerUserId) {
-
-        monthlySummaryService.compareHeaderIdWithRequestedDataId(userId, headerUserId);
+            @RequestHeader(name = "User-ID") Integer headerUserId) {
 
         // Define a DateTimeFormatter to parse the date in the format yyyy-MM-dd
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
@@ -114,7 +110,8 @@ public class MonthlySummaryController {
         // Parse the monthYear string to a LocalDate object by appending "-01"
         // This ensures the date is in the format yyyy-MM-dd for LocalDate parsing
         LocalDate date = LocalDate.parse(monthYear + "-01", formatter);
-        List<MonthlySummary> summarys = monthlySummaryService.getMonthlySummarysByMonthYearAndUserId(date, userId);
+        List<MonthlySummary> summarys = monthlySummaryService.getMonthlySummarysByMonthYearAndUserId(date,
+                headerUserId);
 
         return new ResponseEntity<List<MonthlySummary>>(summarys, HttpStatus.OK);
     }
@@ -123,13 +120,11 @@ public class MonthlySummaryController {
      * Controller to delete all monthly summarys associated with a userId
      * 
      */
-    @DeleteMapping("deleteAll/user/{id}")
-    public ResponseEntity<MonthlySummary> deleteAllSummarysByUserId(@PathVariable int id,
-            @RequestHeader(name = "User-ID") String headerUserId) {
+    @DeleteMapping("deleteAll/user")
+    public ResponseEntity<MonthlySummary> deleteAllSummarysByUserId(
+            @RequestHeader(name = "User-ID") Integer headerUserId) {
 
-        monthlySummaryService.compareHeaderIdWithRequestedDataId(id, headerUserId);
-
-        monthlySummaryService.deleteAllSummarysByUserId(id);
+        monthlySummaryService.deleteAllSummarysByUserId(headerUserId);
         return ResponseEntity.noContent().build();
     }
 
