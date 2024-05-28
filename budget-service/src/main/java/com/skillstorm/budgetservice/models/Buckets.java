@@ -24,10 +24,6 @@ public class Buckets {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int bucketId;
 
-    // @ManyToOne
-    // @JoinColumn(name = "user_id")
-    // private User user;
-
     @Column(nullable = false)
     private int userId;
 
@@ -85,14 +81,6 @@ public class Buckets {
     public void setUserId(int userId) {
         this.userId = userId;
     }
-
-    // public User getUser() {
-    // return user;
-    // }
-
-    // public void setUser(User user) {
-    // this.user = user;
-    // }
 
     public String getBucketName() {
         return bucketName;

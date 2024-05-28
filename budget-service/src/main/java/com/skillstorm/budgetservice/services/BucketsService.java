@@ -6,6 +6,7 @@ import java.time.LocalDate;
 
 import org.springframework.stereotype.Service;
 
+import org.springframework.http.HttpHeaders;
 import com.skillstorm.budgetservice.models.Buckets;
 import com.skillstorm.budgetservice.models.Budget;
 import com.skillstorm.budgetservice.repositories.BucketsRepository;
@@ -135,4 +136,14 @@ public class BucketsService {
         bucketsRepository.deleteAllBucketsByUserId(userId);
     }
 
+    /**
+     * Validates the User-ID header.
+     *
+     * @param headerUserId the User-ID header value
+     */
+    public void validateRequestHeaderUserId(String headerUserId) {
+        if (headerUserId == null || headerUserId.isEmpty()) {
+            throw new RuntimeException("User-ID header is missing or empty");
+        }
+    }
 }

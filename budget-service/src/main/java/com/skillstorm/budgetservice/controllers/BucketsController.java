@@ -47,12 +47,13 @@ public class BucketsController {
     /**
      * Retrieves all Bucket objects associated with a specific user ID.
      *
-     * @param userId the ID of the user
      * @param headerUserId the user ID from the request header
      * @return a ResponseEntity containing the list of Buckets for the specified user and the HTTP status code
      */
-    @GetMapping("/user/{userId}")
-    public ResponseEntity<List<Buckets>> getAllBucketsByUserId(@PathVariable int userId, @RequestHeader(name = "User-ID") String headerUserId){
+    @GetMapping("/user")
+    public ResponseEntity<List<Buckets>> getAllBucketsByUserId(@RequestHeader(name = "User-ID") String headerUserId){
+        bucketsService.validateRequestHeaderUserId(headerUserId);
+        int userId = Integer.parseInt(headerUserId);
         List<Buckets> buckets = bucketsService.getAllBucketsByUserId(userId);
         return ResponseEntity.ok(buckets);
     }
@@ -61,14 +62,23 @@ public class BucketsController {
      * Retrieves a specific Bucket object by its bucket ID.
      *
      * @param bucketId the ID of the bucket
+     * @param headerUserId the user ID from the request header
      * @return a ResponseEntity containing the Bucket object and the HTTP status code
      */
     @GetMapping("/bucket/{bucketId}")
-    public ResponseEntity<Buckets> getBucketByBucketId(@PathVariable int bucketId) {
+    public ResponseEntity<Buckets> getBucketByBucketId(@PathVariable int bucketId, @RequestHeader(name = "User-ID") String headerUserId) {
+        bucketsService.validateRequestHeaderUserId(headerUserId);
+        int userId = Integer.parseInt(headerUserId);
+
         Optional<Buckets> bucket = bucketsService.getBucketByBucketId(bucketId);
 
         if (bucket.isPresent()) {
-            return ResponseEntity.ok(bucket.get());
+            Buckets foundBucket = bucket.get();
+            if (foundBucket.getUserId() == userId) {
+                return ResponseEntity.ok(foundBucket);
+            } else {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
+            }
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
@@ -78,12 +88,13 @@ public class BucketsController {
      * Retrieves Bucket objects associated with a specific user ID and month-year.
      *
      * @param monthYear the month-year to retrieve the Buckets for
-     * @param userId the ID of the user
      * @param headerUserId the user ID from the request header
      * @return a ResponseEntity containing the list of Buckets for the specified month-year and user, and the HTTP status code
      */
-    @GetMapping("/monthyear/{monthYear}/user/{userId}")
-    public ResponseEntity<List<Buckets>> getBudgetsByMonthYear(@PathVariable String monthYear, @PathVariable int userId, @RequestHeader(name = "User-ID") String headerUserId) {
+    @GetMapping("/monthyear/{monthYear}")
+    public ResponseEntity<List<Buckets>> getBudgetsByMonthYear(@PathVariable String monthYear, @RequestHeader(name = "User-ID") String headerUserId) {
+        bucketsService.validateRequestHeaderUserId(headerUserId);
+        int userId = Integer.parseInt(headerUserId);
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         LocalDate date = LocalDate.parse(monthYear + "-01", formatter); // This is to make sure the date is in the format of yyyy-MM-dd for local date
         List<Buckets> budgets = bucketsService.getBudgetsByMonthYearAndUserId(date, userId);
@@ -94,10 +105,16 @@ public class BucketsController {
      * Adds a new Bucket object.
      *
      * @param bucket the Bucket object to add
+     * @param headerUserId the user ID from the request header
      * @return a ResponseEntity containing the added Bucket object and the HTTP status code
      */
     @PostMapping("/add")
-    public ResponseEntity<Buckets> addBucket(@RequestBody Buckets bucket) {
+    public ResponseEntity<Buckets> addBucket(@RequestBody Buckets bucket, @RequestHeader(name = "User-ID") String headerUserId) {
+        bucketsService.validateRequestHeaderUserId(headerUserId);
+        int userId = Integer.parseInt(headerUserId);
+
+        bucket.setUserId(userId);
+
         Buckets newBucket = bucketsService.saveBucket(bucket);
         return ResponseEntity.status(HttpStatus.CREATED).body(newBucket);
     }
@@ -112,11 +129,18 @@ public class BucketsController {
      */
     @PutMapping("/update/{bucketId}")
     public ResponseEntity<Buckets> updateBucket(@PathVariable int bucketId, @RequestBody Buckets bucketDetails, @RequestHeader(name = "User-ID") String headerUserId) {
-        try {
+        bucketsService.validateRequestHeaderUserId(headerUserId);
+        int userId = Integer.parseInt(headerUserId);
+
+        Optional<Buckets> existingBucket = bucketsService.getBucketByBucketId(bucketId);
+
+        // This is to check if the bucket exists and if the user ID matches
+        if (existingBucket.isPresent() && existingBucket.get().getUserId() == userId) {
             Buckets updatedBucket = bucketsService.updateBucket(bucketId, bucketDetails);
             return ResponseEntity.ok(updatedBucket);
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        } else {
+            // If the bucket does not exist or the user ID does not match, return a 403 Forbidden status
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
         }
     }
 
@@ -124,23 +148,35 @@ public class BucketsController {
      * Deletes a specific Bucket object by its bucket ID.
      *
      * @param bucketId the ID of the bucket to delete
+     * @param headerUserId the user ID from the request header
      * @return a ResponseEntity containing a message indicating the bucket is deleted and the HTTP status code
      */
     @DeleteMapping("/delete/{bucketId}")
-    public ResponseEntity<String> deleteBucket(@PathVariable int bucketId) {
-        bucketsService.deleteBucket(bucketId);
-        return ResponseEntity.ok("The bucket is deleted");
+    public ResponseEntity<String> deleteBucket(@PathVariable int bucketId, @RequestHeader(name = "User-ID") String headerUserId ) {
+        bucketsService.validateRequestHeaderUserId(headerUserId);
+        int userId = Integer.parseInt(headerUserId);
+
+        Optional<Buckets> existingBucket = bucketsService.getBucketByBucketId(bucketId);
+
+        // This is to check if the bucket exists and if the user ID matches
+        if (existingBucket.isPresent() && existingBucket.get().getUserId() == userId) {
+            bucketsService.deleteBucket(bucketId);
+            return ResponseEntity.ok("The bucket is deleted");
+        } else {
+            // If the bucket does not exist or the user ID does not match, return a 403 Forbidden status
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You do not have permission to delete this bucket");
+        }
     }
 
     /**
      * Deletes all Bucket objects associated with a specific user ID.
-     *
-     * @param userId the ID of the user
      * @param headerUserId the user ID from the request header
      * @return a ResponseEntity containing a message indicating the buckets are deleted and the HTTP status code
      */
-    @DeleteMapping("/deleteAll/user/{userId}")
-    public ResponseEntity<String> deleteAllBucketsByUserId(@PathVariable int userId, @RequestHeader(name = "User-ID") String headerUserId) {
+    @DeleteMapping("/deleteAll/user")
+    public ResponseEntity<String> deleteAllBucketsByUserId(@RequestHeader(name = "User-ID") String headerUserId) {
+        bucketsService.validateRequestHeaderUserId(headerUserId);
+        int userId = Integer.parseInt(headerUserId);
         bucketsService.deleteAllBucketsByUserId(userId);
         return ResponseEntity.ok("All buckets related to the user are deleted");
     }

@@ -22,6 +22,9 @@ import org.springframework.web.context.WebApplicationContext;
 import com.skillstorm.budgetservice.models.Buckets;
 import com.skillstorm.budgetservice.services.BucketsService;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 
@@ -58,22 +61,31 @@ public class BucketControllerTest {
         List<Buckets> buckets = Arrays.asList(new Buckets(), new Buckets());
         when(bucketsService.getAllBucketsByUserId(anyInt())).thenReturn(buckets);
 
-        mockMvc.perform(get("/buckets/user/{userId}", 1))
+        mockMvc.perform(get("/buckets/user")
+        .header("User-ID", "1"))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.length()").value(buckets.size()));
     }
 
     @Test
     public void testGetBucketByBucketId() throws Exception {
-        when(bucketsService.getBucketByBucketId(anyInt())).thenReturn(Optional.empty());
+        Buckets bucket = new Buckets(1, "hahaha", BigDecimal.valueOf(1111), BigDecimal.valueOf(333), LocalDate.now(), true, true, LocalDateTime.now());
+        when(bucketsService.getBucketByBucketId(anyInt())).thenReturn(Optional.of(bucket));
 
-        mockMvc.perform(get("/buckets/bucket/{bucketId}", 1))
-            .andExpect(status().isNotFound());
+        mockMvc.perform(get("/buckets/bucket/{bucketId}", 1)
+                .header("User-ID", "1"))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.bucketName").value(bucket.getBucketName()));
     }
 
     @Test
     public void testDeleteBucket() throws Exception {
-        mockMvc.perform(delete("/buckets/delete/{bucketId}", 1))
+        Buckets bucket = new Buckets(1, "hahaha", BigDecimal.valueOf(1111), BigDecimal.valueOf(333), LocalDate.now(), true, true, LocalDateTime.now());
+        bucket.setUserId(1);
+        when(bucketsService.getBucketByBucketId(anyInt())).thenReturn(Optional.of(bucket));
+
+        mockMvc.perform(delete("/buckets/delete/{bucketId}", 1)
+                .header("User-ID", "1"))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$").value("The bucket is deleted"));
     }
