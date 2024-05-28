@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Optional;
 import java.time.LocalDate;
 
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Service;
 
 import org.springframework.http.HttpHeaders;
@@ -145,5 +147,16 @@ public class BucketsService {
         if (headerUserId == null || headerUserId.isEmpty()) {
             throw new RuntimeException("User-ID header is missing or empty");
         }
+    }
+
+    /**
+     * Received delete message from UserService and deletes 
+     * all Bucket objects associated with specific user ID.
+     * 
+     * @param userId the ID of the user from the message
+     */
+    @RabbitListener(queues = "${queues.fanout.bucketService}")
+    public void receiveDeleteAllByUserId(@Payload int userId) {
+      deleteAllBucketsByUserId(userId);
     }
 }

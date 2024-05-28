@@ -5,7 +5,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Service;
 
 import com.skillstorm.budgetservice.dto.TransactionDTO;
@@ -152,4 +154,15 @@ public class BudgetService {
         budgetRepository.deleteAllBudgetsByUserId(id);
     }
 
+
+    /**
+     * Received delete message from UserService and deletes 
+     * all Bucket objects associated with specific user ID.
+     * 
+     * @param userId the ID of the user from the message
+     */
+    @RabbitListener(queues = "${queues.fanout.budgetService}")
+    public void receiveDeleteAllByUserId(@Payload int userId) {
+      deleteAllBudgetsByUserId(userId);
+    }
 }
