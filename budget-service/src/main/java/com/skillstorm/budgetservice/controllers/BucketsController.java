@@ -53,7 +53,6 @@ public class BucketsController {
      */
     @GetMapping("/user/{userId}")
     public ResponseEntity<List<Buckets>> getAllBucketsByUserId(@PathVariable int userId, @RequestHeader(name = "User-ID") String headerUserId){
-        bucketsService.compareHeaderIdWithRequestedDataId(userId, headerUserId);
         List<Buckets> buckets = bucketsService.getAllBucketsByUserId(userId);
         return ResponseEntity.ok(buckets);
     }
@@ -85,7 +84,6 @@ public class BucketsController {
      */
     @GetMapping("/monthyear/{monthYear}/user/{userId}")
     public ResponseEntity<List<Buckets>> getBudgetsByMonthYear(@PathVariable String monthYear, @PathVariable int userId, @RequestHeader(name = "User-ID") String headerUserId) {
-        bucketsService.compareHeaderIdWithRequestedDataId(userId, headerUserId);
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         LocalDate date = LocalDate.parse(monthYear + "-01", formatter); // This is to make sure the date is in the format of yyyy-MM-dd for local date
         List<Buckets> budgets = bucketsService.getBudgetsByMonthYearAndUserId(date, userId);
@@ -115,7 +113,6 @@ public class BucketsController {
     @PutMapping("/update/{bucketId}")
     public ResponseEntity<Buckets> updateBucket(@PathVariable int bucketId, @RequestBody Buckets bucketDetails, @RequestHeader(name = "User-ID") String headerUserId) {
         try {
-            bucketsService.compareHeaderIdWithRequestedDataId(bucketDetails.getUserId(), headerUserId);
             Buckets updatedBucket = bucketsService.updateBucket(bucketId, bucketDetails);
             return ResponseEntity.ok(updatedBucket);
         } catch (RuntimeException e) {
@@ -144,7 +141,6 @@ public class BucketsController {
      */
     @DeleteMapping("/deleteAll/user/{userId}")
     public ResponseEntity<String> deleteAllBucketsByUserId(@PathVariable int userId, @RequestHeader(name = "User-ID") String headerUserId) {
-        bucketsService.compareHeaderIdWithRequestedDataId(userId, headerUserId);
         bucketsService.deleteAllBucketsByUserId(userId);
         return ResponseEntity.ok("All buckets related to the user are deleted");
     }
