@@ -135,17 +135,4 @@ public class BucketsService {
         bucketsRepository.deleteAllBucketsByUserId(userId);
     }
 
-    /**
-     * Compares the user ID.
-     *
-     * @param userId the ID of the user in the request
-     * @param headerUserId the ID of the user in the header
-     * @throws RuntimeException if the user IDs do not match
-     */
-    public void compareHeaderIdWithRequestedDataId(int userId, String headerUserId) {
-
-        if (userId != Integer.valueOf(headerUserId)) {
-            throw new RuntimeException("User ID in header does not match!");
-        }
-    }
 }
