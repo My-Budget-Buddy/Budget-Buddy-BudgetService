@@ -80,11 +80,12 @@ public class BudgetControllerTest {
 
                 when(budgetService.findBudgetsByUserId(1)).thenReturn(budgets);
 
-                mockMvc.perform(get("/budgets/1"))
+                mockMvc.perform(get("/budgets/userBudgets")
+                                .header("User-ID", 1))
                                 .andExpect(status().isOk())
                                 .andExpect(jsonPath("$[0].budgetId").value(1))
                                 .andExpect(jsonPath("$[0].category").value("Food"));
-        };
+        }
 
         @Test
         void testCreateBudget() throws Exception {
@@ -106,24 +107,25 @@ public class BudgetControllerTest {
         @Test
         void testEditBudget() throws Exception {
                 Budget budget = new Budget(1, 1, "Food", BigDecimal.valueOf(100), true, LocalDate.of(2023, 5, 1),
-                                "Note 1",
-                                null);
+                                "Note 1", null);
 
                 when(budgetService.editBudget(eq(1), any(Budget.class))).thenReturn(budget);
 
                 mockMvc.perform(put("/budgets/1")
                                 .contentType(MediaType.APPLICATION_JSON)
+                                .header("User-ID", 1)
                                 .content(asJsonString(budget)))
                                 .andExpect(status().isOk())
                                 .andExpect(jsonPath("$.budgetId").value(1))
                                 .andExpect(jsonPath("$.category").value("Food"));
-        };
+        }
 
         @Test
         void testDeleteBudget() throws Exception {
-                mockMvc.perform(delete("/budgets/1"))
+                mockMvc.perform(delete("/budgets/1")
+                                .header("User-ID", "1"))
                                 .andExpect(status().isNoContent());
-        };
+        }
 
         @Test
         void testGetBudgetsByMonthYear() throws Exception {
@@ -133,7 +135,8 @@ public class BudgetControllerTest {
 
                 when(budgetService.getBudgetsByMonthYearAndUserId(any(LocalDate.class), eq(1))).thenReturn(budgets);
 
-                mockMvc.perform(get("/budgets/monthyear/2023-05/user/1"))
+                mockMvc.perform(get("/budgets/monthyear/2023-05")
+                                .header("User-ID", 1))
                                 .andExpect(status().isOk())
                                 .andExpect(jsonPath("$[0].budgetId").value(1))
                                 .andExpect(jsonPath("$[0].category").value("Food"));
@@ -141,16 +144,24 @@ public class BudgetControllerTest {
 
         @Test
         void testGetTranscationsByMonthYear() throws Exception {
-
                 List<TransactionDTO> transactions = Arrays.asList(
                                 new TransactionDTO(1, 1, 1, "Vendor1", 100.0, "Category1", "Description1",
                                                 LocalDate.of(2023, 5, 1)));
 
                 when(budgetService.findTransactionByMonthYear(any(LocalDate.class), eq(1))).thenReturn(transactions);
 
-                mockMvc.perform(get("/budgets/transactions/2023-05/user/1"))
+                mockMvc.perform(get("/budgets/transactions/2023-05")
+                                .header("User-ID", 1))
                                 .andExpect(status().isOk())
                                 .andExpect(jsonPath("$[0].transactionId").value(1))
                                 .andExpect(jsonPath("$[0].category").value("Category1"));
         }
+
+        @Test
+        void testDeleteAllBudgetsByUserId() throws Exception {
+                mockMvc.perform(delete("/budgets/deleteAll/user")
+                                .header("User-ID", 1))
+                                .andExpect(status().isNoContent());
+        }
+
 }
