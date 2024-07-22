@@ -5,11 +5,12 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Service;
 
 import com.skillstorm.budgetservice.dto.TransactionDTO;
-import com.skillstorm.budgetservice.models.Buckets;
 import com.skillstorm.budgetservice.models.Budget;
 import com.skillstorm.budgetservice.repositories.BudgetRepository;
 
@@ -20,7 +21,7 @@ public class BudgetService {
     BudgetRepository budgetRepository;
 
     @Autowired
-    TranscationService transcationService;
+    RabbitTemplate rabbitTemplate;
 
     public List<Budget> findAllBudgets() {
         return budgetRepository.findAll();
@@ -39,7 +40,8 @@ public class BudgetService {
     /**
      * Saves the given budget into the repository.
      *
-     * @param user The budget to be saved.
+     * @param budget The budget to be saved.
+     * @param headerUserId The id of the user making the request
      * @return The saved budget.
      */
     public Budget saveBudget(Budget budget, Integer headerUserId) {
@@ -128,19 +130,22 @@ public class BudgetService {
      */
     public List<TransactionDTO> findTransactionByMonthYear(LocalDate monthYear, int userId) {
         // Retrieve all transactions for the given user, excluding income transactions
-        List<TransactionDTO> transactions = transcationService.getTransactionsExcludingIncome(userId);
+        List<TransactionDTO> transactions = rabbitTemplate.convertSendAndReceiveAsType("budget-request", userId, new ParameterizedTypeReference<>() {});
 
-        // Filter transactions to only include those that match the specified month and
+        // If no transactions are found, return an empty list
+        if(transactions == null) {
+          return List.of();
+        }
+
+        // Otherwise, filter transactions to only include those that match the specified month and
         // year
-        List<TransactionDTO> filteredTransactions = transactions.stream()
+        return transactions.stream()
                 .filter(transaction -> {
                     LocalDate transactionDate = transaction.getDate(); // Assuming getDate() returns a LocalDate
                     return transactionDate.getYear() == monthYear.getYear() &&
                             transactionDate.getMonth() == monthYear.getMonth();
                 })
                 .collect(Collectors.toList());
-
-        return filteredTransactions;
     }
 
     /**
