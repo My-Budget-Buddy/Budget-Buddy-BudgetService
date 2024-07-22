@@ -3,11 +3,18 @@ package com.skillstorm.budgetservice.services;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.stream.Collectors;
 
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.amqp.support.AmqpHeaders;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.messaging.handler.annotation.Header;
+import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Service;
 
 import com.skillstorm.budgetservice.dto.TransactionDTO;
@@ -22,6 +29,8 @@ public class BudgetService {
 
     @Autowired
     RabbitTemplate rabbitTemplate;
+
+    final ConcurrentMap<String, CompletableFuture<List<TransactionDTO>>> correlationMap = new ConcurrentHashMap<>();
 
     public List<Budget> findAllBudgets() {
         return budgetRepository.findAll();
@@ -76,6 +85,7 @@ public class BudgetService {
      * @return The edited budget object.
      */
     public Budget editBudget(int id, Budget budget) {
+
         Optional<Budget> existingBudgetOptional = budgetRepository.findById(id);
 
         if (existingBudgetOptional.isPresent()) {
@@ -130,7 +140,7 @@ public class BudgetService {
      */
     public List<TransactionDTO> findTransactionByMonthYear(LocalDate monthYear, int userId) {
         // Retrieve all transactions for the given user, excluding income transactions
-        List<TransactionDTO> transactions = rabbitTemplate.convertSendAndReceiveAsType("budget-request", userId, new ParameterizedTypeReference<>() {});
+        List<TransactionDTO> transactions = getUserTransactions(userId);
 
         // If no transactions are found, return an empty list
         if(transactions == null) {
@@ -146,6 +156,52 @@ public class BudgetService {
                             transactionDate.getMonth() == monthYear.getMonth();
                 })
                 .collect(Collectors.toList());
+    }
+
+    /**
+     *  Send a request to the Transaction-Service for all transactions related to the User
+     * @param userId the ID for the user making the request
+     * @return the list of the user's transactions
+     */
+    private List<TransactionDTO> getUserTransactions(int userId) {
+        // Generate a correlationId so the queue can map the correct response and store it as a future
+        String correlationId = UUID.randomUUID().toString();
+        CompletableFuture<List<TransactionDTO>> transactionsFuture = new CompletableFuture<>();
+        correlationMap.put(correlationId, transactionsFuture);
+
+        // Send the request to the Transactions-Service using RabbitMq:
+        rabbitTemplate.convertAndSend("budget-request", userId, message -> {
+            message.getMessageProperties().setCorrelationId(correlationId);
+            message.getMessageProperties().setReplyTo("budget-response");
+            return message;
+        });
+
+        // Message queues are async by nature, but we're in a synchronous environment and
+        // the request takes time to complete. We need to tell the thread to wait or it will immediately
+        // return null
+        try {
+            return transactionsFuture.get();
+        } catch (Exception e) {
+            throw new RuntimeException("Error waiting for transactions response", e);
+        } finally {
+            // Once the request has completed, we can remove it from our list of requests
+            correlationMap.remove(correlationId);
+        }
+    }
+
+
+    /**
+     *
+     * @param transactions the List of the user's transactions received from Transaction-Service
+     * @param correlationId the id for the request
+     */
+    @RabbitListener(queues = "budget-response")
+    public void handleTransactionsResponse(@Payload List<TransactionDTO> transactions, @Header(AmqpHeaders.CORRELATION_ID) String correlationId ) {
+        // Find the future that was stored in the our correlation map that is relevant to the request and use it to store our response
+        CompletableFuture<List<TransactionDTO>> transactionsFuture = correlationMap.remove(correlationId);
+        if(transactionsFuture != null) {
+            transactionsFuture.complete(transactions);
+        }
     }
 
     /**

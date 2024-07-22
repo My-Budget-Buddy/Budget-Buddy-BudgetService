@@ -49,12 +49,25 @@ public class RabbitMqConfig {
         return new Queue("${queues.budget.request}");
     }
 
+    @Bean
+    public Queue transactionResponseQueue() {
+        return new Queue("${queues.budget.response}");
+    }
+
     // Bind the queues to the exchange:
     @Bean
     public Binding transactionRequestBinding(Queue transactionRequestQueue, Exchange directExchange) {
         return BindingBuilder.bind(transactionRequestQueue)
                 .to(directExchange)
                 .with("${queues.budget.request}")
+                .noargs();
+    }
+
+    @Bean
+    public Binding transactionResponseBinding(Queue transactionResponseQueue, Exchange directExchange) {
+        return BindingBuilder.bind(transactionResponseQueue)
+                .to(directExchange)
+                .with("${queues.budget.response}")
                 .noargs();
     }
 

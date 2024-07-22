@@ -34,3 +34,4 @@ exchanges:
 queues:
   budget:
     request: budget-request
+    response: budget-response
