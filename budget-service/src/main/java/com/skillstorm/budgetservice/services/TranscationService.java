@@ -12,18 +12,34 @@ import java.util.List;
 
 import com.skillstorm.budgetservice.dto.TransactionDTO;
 
+/**
+ * Service class for handling transactions.
+ * It communicates with the transaction-service to fetch transaction data.
+ */
 @Service
 public class TranscationService {
 
     private final LoadBalancerClient loadBalancerClient;
     private final RestClient restClient;
 
+    /**
+     * Constructor to initialize the TranscationService with a LoadBalancerClient.
+     * The RestClient is also initialized here.
+     *
+     * @param loadBalancerClient the LoadBalancerClient for service discovery
+     */
     public TranscationService(LoadBalancerClient loadBalancerClient) {
         this.loadBalancerClient = loadBalancerClient;
         this.restClient = RestClient.builder()
                 .build();
     }
 
+    /**
+     * Fetches transactions excluding income for a given user ID.
+     *
+     * @param userId the ID of the user
+     * @return a list of TransactionDTO objects, or an empty list if an error occurs
+     */
     public List<TransactionDTO> getTransactionsExcludingIncome(int userId) {
 
         try {
