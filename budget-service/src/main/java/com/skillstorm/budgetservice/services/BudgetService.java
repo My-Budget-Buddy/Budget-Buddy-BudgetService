@@ -3,13 +3,21 @@ package com.skillstorm.budgetservice.services;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.stream.Collectors;
 
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.amqp.support.AmqpHeaders;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.handler.annotation.Header;
+import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Service;
 
 import com.skillstorm.budgetservice.dto.TransactionDTO;
-import com.skillstorm.budgetservice.models.Buckets;
 import com.skillstorm.budgetservice.models.Budget;
 import com.skillstorm.budgetservice.repositories.BudgetRepository;
 
@@ -20,7 +28,9 @@ public class BudgetService {
     BudgetRepository budgetRepository;
 
     @Autowired
-    TranscationService transcationService;
+    RabbitTemplate rabbitTemplate;
+
+    final ConcurrentMap<String, CompletableFuture<List<TransactionDTO>>> correlationMap = new ConcurrentHashMap<>();
 
     public List<Budget> findAllBudgets() {
         return budgetRepository.findAll();
@@ -39,7 +49,8 @@ public class BudgetService {
     /**
      * Saves the given budget into the repository.
      *
-     * @param user The budget to be saved.
+     * @param budget The budget to be saved.
+     * @param headerUserId The id of the user making the request
      * @return The saved budget.
      */
     public Budget saveBudget(Budget budget, Integer headerUserId) {
@@ -74,6 +85,7 @@ public class BudgetService {
      * @return The edited budget object.
      */
     public Budget editBudget(int id, Budget budget) {
+
         Optional<Budget> existingBudgetOptional = budgetRepository.findById(id);
 
         if (existingBudgetOptional.isPresent()) {
@@ -128,19 +140,68 @@ public class BudgetService {
      */
     public List<TransactionDTO> findTransactionByMonthYear(LocalDate monthYear, int userId) {
         // Retrieve all transactions for the given user, excluding income transactions
-        List<TransactionDTO> transactions = transcationService.getTransactionsExcludingIncome(userId);
+        List<TransactionDTO> transactions = getUserTransactions(userId);
 
-        // Filter transactions to only include those that match the specified month and
+        // If no transactions are found, return an empty list
+        if(transactions == null) {
+          return List.of();
+        }
+
+        // Otherwise, filter transactions to only include those that match the specified month and
         // year
-        List<TransactionDTO> filteredTransactions = transactions.stream()
+        return transactions.stream()
                 .filter(transaction -> {
                     LocalDate transactionDate = transaction.getDate(); // Assuming getDate() returns a LocalDate
                     return transactionDate.getYear() == monthYear.getYear() &&
                             transactionDate.getMonth() == monthYear.getMonth();
                 })
                 .collect(Collectors.toList());
+    }
 
-        return filteredTransactions;
+    /**
+     *  Send a request to the Transaction-Service for all transactions related to the User
+     * @param userId the ID for the user making the request
+     * @return the list of the user's transactions
+     */
+    private List<TransactionDTO> getUserTransactions(int userId) {
+        // Generate a correlationId so the queue can map the correct response and store it as a future
+        String correlationId = UUID.randomUUID().toString();
+        CompletableFuture<List<TransactionDTO>> transactionsFuture = new CompletableFuture<>();
+        correlationMap.put(correlationId, transactionsFuture);
+
+        // Send the request to the Transactions-Service using RabbitMq:
+        rabbitTemplate.convertAndSend("budget-request", userId, message -> {
+            message.getMessageProperties().setCorrelationId(correlationId);
+            message.getMessageProperties().setReplyTo("budget-response");
+            return message;
+        });
+
+        // Message queues are async by nature, but we're in a synchronous environment and
+        // the request takes time to complete. We need to tell the thread to wait or it will immediately
+        // return null
+        try {
+            return transactionsFuture.get();
+        } catch (Exception e) {
+            throw new RuntimeException("Error waiting for transactions response", e);
+        } finally {
+            // Once the request has completed, we can remove it from our list of requests
+            correlationMap.remove(correlationId);
+        }
+    }
+
+
+    /**
+     *
+     * @param transactions the List of the user's transactions received from Transaction-Service
+     * @param correlationId the id for the request
+     */
+    @RabbitListener(queues = "budget-response")
+    public void handleTransactionsResponse(@Payload List<TransactionDTO> transactions, @Header(AmqpHeaders.CORRELATION_ID) String correlationId ) {
+        // Find the future that was stored in the our correlation map that is relevant to the request and use it to store our response
+        CompletableFuture<List<TransactionDTO>> transactionsFuture = correlationMap.remove(correlationId);
+        if(transactionsFuture != null) {
+            transactionsFuture.complete(transactions);
+        }
     }
 
     /**
