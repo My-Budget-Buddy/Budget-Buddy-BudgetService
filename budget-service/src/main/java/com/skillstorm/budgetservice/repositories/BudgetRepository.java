@@ -16,11 +16,33 @@ import jakarta.transaction.Transactional;
 
 @Repository
 public interface BudgetRepository extends JpaRepository<Budget, Integer> {
+    /**
+     * Finds all Budgets associated with a specific user ID.
+     * 
+     * @param userId the ID of the user
+     * @return a list of Budgets for the given user ID
+     */
     List<Budget> findByUserId(int userId);
 
+    /**
+     * Custom query to find Budgets by month and year and user ID.
+     * 
+     * @param monthYear the month and year to filter by
+     * @param userId    the ID of the user
+     * @return a list of Budgets for the specified month, year, and user ID
+     */
     @Query("SELECT budget FROM Budget budget WHERE budget.monthYear = :monthYear AND budget.userId = :userId")
     List<Budget> findByMonthYearAndUserId(@Param("monthYear") LocalDate monthYear, @Param("userId") int userId);
 
+    /**
+     * Deletes all Budgets associated with a specific user ID.
+     * 
+     * This method is annotated with @Modifying and @Transactional to indicate that
+     * it
+     * performs a modifying query that should be executed within a transaction.
+     * 
+     * @param userId the ID of the user
+     */
     @Modifying
     @Transactional
     @Query("DELETE FROM Budget budget WHERE budget.userId = :userId")
