@@ -28,6 +28,14 @@ eureka:
     leaseRenewalIntervalInSeconds: 30
     hostname: ${AWS_HOSTNAME:localhost}
 
+# Set logging level to TRACE to see method calls, arguments, and returned values during execution:
+logging:
+  level:
+    com:
+      skillstorm:
+        budgetservice: TRACE
+
+# Configure RabbitMQ:
 exchanges:
   direct: direct-exchange
 
