@@ -84,6 +84,20 @@
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
+
+			<!-- https://mvnrepository.com/artifact/org.jacoco/jacoco-maven-plugin -->
+			<dependency>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+				<version>0.8.12</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.github.meanbeanlib</groupId>
+				<artifactId>meanbean</artifactId>
+				<version>3.0.0-M9</version>
+			</dependency>
+
 		</dependencies>
 	</dependencyManagement>
 
@@ -100,7 +114,6 @@
 				<configuration>
 					<excludes>
                     	<exclude>**/config/**</exclude>
-                    	<exclude>**/aspect/**</exclude>
 					</excludes>
 				</configuration>
                 <executions>
@@ -124,7 +137,7 @@
                           	  	  	  	<limit>
                           	  	  	  	  	<counter>COMPLEXITY</counter>
                           	  	  	  	  	<value>COVEREDRATIO</value>
-                          	  	  	  	  	<minimum>0.1</minimum>
+                          	  	  	  	  	<minimum>0.10</minimum>
                           	  	  	  	</limit>
                           	  	  	</limits>
                           	  	</rule>
