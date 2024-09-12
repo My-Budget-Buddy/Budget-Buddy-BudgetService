@@ -22,6 +22,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import com.skillstorm.budgetservice.dto.TransactionDTO;
 import com.skillstorm.budgetservice.models.Budget;
 import com.skillstorm.budgetservice.repositories.BudgetRepository;
 
@@ -29,6 +30,9 @@ public class BudgetServiceTest {
 
     @Mock
     private BudgetRepository budgetRepository;
+
+    @Mock
+    private TranscationService transcationService;
 
     @InjectMocks
     private BudgetService budgetService;
@@ -142,6 +146,31 @@ public class BudgetServiceTest {
         List<Budget> response = budgetService.getBudgetsByMonthYearAndUserId(LocalDate.now(), 1);
 
         assertEquals(budgets, response);
+    }
+
+    @Test
+    public void testFindTransactionByMonthYear() {
+        TransactionDTO transactionDTO1 = new TransactionDTO(0, 0, 0, null, 0, null, null, LocalDate.now());
+        TransactionDTO transactionDTO2 = new TransactionDTO(0, 0, 0, null, 0, null, null, LocalDate.of(2000, 1, 1));
+        TransactionDTO transactionDTO3 = new TransactionDTO(0, 0, 0, null, 0, null, null, LocalDate.of(LocalDate.now().getMonthValue(), 1, 1));
+
+        List<TransactionDTO> transactionDTOs = Arrays.asList(transactionDTO1, transactionDTO2, transactionDTO1, transactionDTO3);
+
+        when(transcationService.getTransactionsExcludingIncome(anyInt())).thenReturn(transactionDTOs);
+        
+        List<TransactionDTO> response = budgetService.findTransactionByMonthYear(LocalDate.now(), 0);
+
+        assertEquals(2, response.size());
+        assertEquals(transactionDTO1, response.get(0));
+        assertEquals(transactionDTO1, response.get(1));
+    }
+
+    @Test
+    public void testDeleteAllBudgetsByUserId() {
+
+        budgetService.deleteAllBudgetsByUserId(0);
+
+        verify(budgetRepository).deleteAllBudgetsByUserId(anyInt());
     }
 
     // @Test
