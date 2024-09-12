@@ -58,6 +58,22 @@
 			<artifactId>spring-boot-devtools</artifactId>
 			<scope>runtime</scope>
 		</dependency>
+
+		<!-- added Jacoco -->
+		<dependency>
+    	    <groupId>org.jacoco</groupId>
+    	    <artifactId>jacoco-maven-plugin</artifactId>
+    	    <version>0.8.12</version>
+    	</dependency>
+
+		<!-- added MeanBean -->
+		<!-- https://mvnrepository.com/artifact/com.github.meanbeanlib/meanbean -->
+		<dependency>
+		    <groupId>com.github.meanbeanlib</groupId>
+		    <artifactId>meanbean</artifactId>
+		    <version>3.0.0-M9</version>
+		</dependency>
+
 	</dependencies>
 	<dependencyManagement>
 		<dependencies>
@@ -77,6 +93,46 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
+			<plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.8.12</version>
+				<configuration>
+					<excludes>
+                    	<exclude>**/config/**</exclude>
+                    	<exclude>**/aspect/**</exclude>
+					</excludes>
+				</configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                    <!-- attached to Maven test phase -->
+                    <execution>
+                        <id>report</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>report</goal>
+                            <goal>check</goal>
+                        </goals>
+                        <configuration>
+							<rules>
+                          	  	<rule>
+                          	  	  	<limits>
+                          	  	  	  	<limit>
+                          	  	  	  	  	<counter>COMPLEXITY</counter>
+                          	  	  	  	  	<value>COVEREDRATIO</value>
+                          	  	  	  	  	<minimum>0.1</minimum>
+                          	  	  	  	</limit>
+                          	  	  	</limits>
+                          	  	</rule>
+                          	</rules>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
 		</plugins>
 	</build>
 
