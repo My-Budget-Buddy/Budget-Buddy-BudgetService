@@ -18,14 +18,10 @@ import java.util.Arrays;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.amqp.core.MessagePostProcessor;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
 
-import com.skillstorm.budgetservice.dto.TransactionDTO;
 import com.skillstorm.budgetservice.models.Budget;
 import com.skillstorm.budgetservice.repositories.BudgetRepository;
 
@@ -33,9 +29,6 @@ public class BudgetServiceTest {
 
     @Mock
     private BudgetRepository budgetRepository;
-
-    @Mock 
-    private RabbitTemplate rabbitTemplate;
 
     @InjectMocks
     private BudgetService budgetService;
