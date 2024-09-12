@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.meanbean.test.BeanVerifier;
 
 public class MonthlySummaryTest {
 
@@ -17,6 +18,11 @@ public class MonthlySummaryTest {
     @BeforeEach
     void setUp() {
         monthlySummary = new MonthlySummary();
+    }
+
+    @Test
+    public void testBean() {
+        BeanVerifier.verifyBean(MonthlySummary.class);
     }
 
     @Test

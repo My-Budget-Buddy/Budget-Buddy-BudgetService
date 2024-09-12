@@ -1,6 +1,7 @@
 package com.skillstorm.budgetservice.models;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.math.BigDecimal;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,6 +15,12 @@ public class BucketsTest {
     @BeforeEach
     public void setUp() {
         buckets = new Buckets();
+    }
+
+    @Test
+    void testPrePersist() {
+        buckets.onCreate();
+        assertNotNull(buckets.getDateCreated());
     }
 
     @Test
