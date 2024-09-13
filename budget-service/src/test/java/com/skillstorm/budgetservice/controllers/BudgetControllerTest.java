@@ -13,6 +13,7 @@ import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -36,6 +37,7 @@ public class BudgetControllerTest {
 
         @InjectMocks
         private BudgetController budgetController;
+        private AutoCloseable closeable;
 
         // Utility method to convert an object to a JSON string
         private static String asJsonString(final Object obj) {
@@ -50,8 +52,13 @@ public class BudgetControllerTest {
 
         @BeforeEach
         void setUp() {
-                MockitoAnnotations.openMocks(this);
+                closeable = MockitoAnnotations.openMocks(this);
                 mockMvc = MockMvcBuilders.standaloneSetup(budgetController).build();
+        }
+
+        @AfterEach
+        public void tearDown() throws Exception {
+                closeable.close();
         }
 
         @Test

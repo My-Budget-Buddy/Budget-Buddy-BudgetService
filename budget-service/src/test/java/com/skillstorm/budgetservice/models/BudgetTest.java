@@ -1,6 +1,7 @@
 package com.skillstorm.budgetservice.models;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -11,6 +12,7 @@ import java.time.LocalDateTime;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.meanbean.test.BeanVerifier;
 
 public class BudgetTest {
 
@@ -19,6 +21,11 @@ public class BudgetTest {
     @BeforeEach
     void setUp() {
         budget = new Budget();
+    }
+
+    @Test
+    public void testBean() {
+        BeanVerifier.verifyBean(Budget.class);
     }
 
     @Test
@@ -82,4 +89,35 @@ public class BudgetTest {
         assertThrows(NullPointerException.class, () -> budget.setTotalAmount(null));
     }
 
+    @Test
+    void testEqualsAndHashCode() {
+        Budget budget1 = new Budget();
+        budget1.setBudgetId(1);
+        budget1.setUserId(1);
+        budget1.setCategory("");
+        budget1.setTotalAmount(BigDecimal.valueOf(0));
+        budget1.setIsReserved(false);
+        budget1.setMonthYear(null);
+        budget1.setNotes("");
+
+        Budget budget2 = new Budget(0, 0, null, BigDecimal.valueOf(0), null, null, null, null);
+        budget2.setBudgetId(1);
+        budget2.setUserId(1);
+        budget2.setCategory("");
+        budget2.setIsReserved(false);
+        budget2.setMonthYear(null);
+        budget2.setNotes("");
+        
+        assertEquals(budget1, budget2);
+        assertEquals(budget1.hashCode(), budget2.hashCode());
+    }
+
+    @Test
+    void testNotEquals() {
+        Budget budget1 = new Budget();
+        Budget budget2 = new Budget(1, 1, "category", BigDecimal.valueOf(0), true, LocalDate.now(), "notes", LocalDateTime.now());
+        
+        assertNotEquals(budget1, budget2);
+        assertNotEquals(budget1.hashCode(), budget2.hashCode());
+    }
 }
