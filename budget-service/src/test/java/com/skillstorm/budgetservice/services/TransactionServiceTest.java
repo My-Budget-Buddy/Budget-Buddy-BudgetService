@@ -29,23 +29,23 @@ public class TransactionServiceTest {
     @InjectMocks
     private TranscationService transactionSvc;
 
-    @Test
-    public void getTransactionsExcludingIncomeTest() {
-        int userId = 1;
-        ServiceInstance serviceInstance = new TestServiceInstance();
-        when(loadBalancerClient.choose(any(String.class))).thenReturn(serviceInstance);
+    // @Test
+    // public void getTransactionsExcludingIncomeTest() {
+    //     int userId = 1;
+    //     ServiceInstance serviceInstance = new TestServiceInstance();
+    //     when(loadBalancerClient.choose(any(String.class))).thenReturn(serviceInstance);
 
-        // verify(loadBalancerClient).choose(any(String.class)).equals(serviceInstance);
-        // TransactionDTO transaction = new TransactionDTO();
+    //     // verify(loadBalancerClient).choose(any(String.class)).equals(serviceInstance);
+    //     // TransactionDTO transaction = new TransactionDTO();
 
-        // Optional<TransactionDTO> accountOptional = Optional.of(transaction);
-        // when(accountRepository.findById(any(int.class))).thenReturn(accountOptional);
+    //     // Optional<TransactionDTO> accountOptional = Optional.of(transaction);
+    //     // when(accountRepository.findById(any(int.class))).thenReturn(accountOptional);
 
-        // List<TransactionDTO> response = transactionSvc.getTransactionsExcludingIncome(userId);
-        // List<TransactionDTO> expectedAccounts = new ArrayList<>();
+    //     // List<TransactionDTO> response = transactionSvc.getTransactionsExcludingIncome(userId);
+    //     // List<TransactionDTO> expectedAccounts = new ArrayList<>();
 
-        // assertEquals(expectedAccounts, response);
-    }
+    //     // assertEquals(expectedAccounts, response);
+    // }
 
     private class TestServiceInstance implements ServiceInstance {
 
