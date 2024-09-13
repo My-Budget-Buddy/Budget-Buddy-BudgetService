@@ -20,6 +20,7 @@ import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.loadbalancer.LoadBalancerClient;
 
 import com.skillstorm.budgetservice.dto.TransactionDTO;
+import com.skillstorm.budgetservice.services.TranscationService;
 
 public class TransactionServiceTest {
 

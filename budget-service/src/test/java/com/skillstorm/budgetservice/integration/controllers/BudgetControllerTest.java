@@ -1,4 +1,4 @@
-package com.skillstorm.budgetservice.controllers;
+package com.skillstorm.budgetservice.integration.controllers;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -24,6 +24,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.http.MediaType;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.skillstorm.budgetservice.controllers.BudgetController;
 import com.skillstorm.budgetservice.dto.TransactionDTO;
 import com.skillstorm.budgetservice.models.Budget;
 import com.skillstorm.budgetservice.services.BudgetService;

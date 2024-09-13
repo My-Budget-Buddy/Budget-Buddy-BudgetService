@@ -14,6 +14,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.meanbean.test.BeanVerifier;
 
+import com.skillstorm.budgetservice.models.Budget;
+
 public class BudgetTest {
 
     private Budget budget;

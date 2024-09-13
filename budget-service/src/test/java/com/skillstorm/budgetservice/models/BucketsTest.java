@@ -6,6 +6,9 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import java.math.BigDecimal;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import com.skillstorm.budgetservice.models.Buckets;
+
 import java.time.LocalDateTime;
 import java.time.LocalDate;
 

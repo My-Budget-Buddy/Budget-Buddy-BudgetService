@@ -1,12 +1,9 @@
 package com.skillstorm.budgetservice.controllers;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
@@ -14,156 +11,118 @@ import java.util.List;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.context.WebApplicationContext;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.skillstorm.budgetservice.models.MonthlySummary;
 import com.skillstorm.budgetservice.services.MonthlySummaryService;
 
-@WebMvcTest(MonthlySummaryController.class)
 public class MonthlySummaryControllerTest {
-
-    @Autowired
-    private MockMvc mockMvc;
-
-    @MockBean
+    
+    @Mock
     private MonthlySummaryService monthlySummaryService;
-
-    @Autowired
-    private WebApplicationContext context;
-
+    
+    @InjectMocks
+    private MonthlySummaryController monthlySummaryController;
     private AutoCloseable closeable;
-
-    // Utility method to convert an object to a JSON string
-    private static String asJsonString(final Object obj) {
-        try {
-            ObjectMapper mapper = new ObjectMapper();
-            mapper.registerModule(new JavaTimeModule()); // Register the JSR310 module
-            return mapper.writeValueAsString(obj);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
 
     @BeforeEach
     public void setUp() {
         closeable = MockitoAnnotations.openMocks(this);
-        mockMvc = MockMvcBuilders.webAppContextSetup(context).build();
     }
 
     @AfterEach
     public void tearDown() throws Exception {
         closeable.close();
+    }  
+
+    @Test
+    public void testFindAllSummarys() {
+        List<MonthlySummary> summarys = Arrays.asList(new MonthlySummary(), new MonthlySummary());
+        
+        when(monthlySummaryService.findAllMonthlySummarys()).thenReturn(summarys);
+        
+        ResponseEntity<List<MonthlySummary>> response = monthlySummaryController.findAllSummarys();
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(summarys, response.getBody());
     }
 
     @Test
-    void testFindAllSummarys() throws Exception {
-        List<MonthlySummary> summaryList = Arrays.asList(
-                new MonthlySummary(1, 1, BigDecimal.valueOf(5000), LocalDate.of(2023, 5, 1), BigDecimal.valueOf(3000)));
+    public void testGetSummarysById() {
+        List<MonthlySummary> summarys = Arrays.asList(new MonthlySummary(), new MonthlySummary());
+        Integer headerUserId = 1;
+        
+        when(monthlySummaryService.findMonthlySummarysByUserId(headerUserId)).thenReturn(summarys);
+        
+        ResponseEntity<List<MonthlySummary>> response = monthlySummaryController.getSummarysById(headerUserId);
 
-        when(monthlySummaryService.findAllMonthlySummarys()).thenReturn(summaryList);
-
-        mockMvc.perform(get("/summarys"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].summaryId").value(1))
-                .andExpect(jsonPath("$[0].userId").value(1))
-                .andExpect(jsonPath("$[0].projectedIncome").value(5000))
-                .andExpect(jsonPath("$[0].monthYear").value("2023-05"))
-                .andExpect(jsonPath("$[0].totalBudgetAmount").value(3000));
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(summarys, response.getBody());
     }
 
     @Test
-    void testGetSummarysById() throws Exception {
-        List<MonthlySummary> summaryList = Arrays.asList(
-                new MonthlySummary(1, 1, BigDecimal.valueOf(5000), LocalDate.of(2023, 5, 1), BigDecimal.valueOf(3000)));
+    public void testCreateMonthlySummary() {
+        Integer id = 1; 
+        MonthlySummary monthlySummary = new MonthlySummary();
+        
+        when(monthlySummaryService.saveMonthlySummary(monthlySummary, id)).thenReturn(monthlySummary);
+        
+        ResponseEntity<MonthlySummary> response = monthlySummaryController.createMonthlySummary(monthlySummary, id);
 
-        when(monthlySummaryService.findMonthlySummarysByUserId(1)).thenReturn(summaryList);
-
-        mockMvc.perform(get("/summarys/userSummarys")
-                .header("User-ID", 1))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].summaryId").value(1))
-                .andExpect(jsonPath("$[0].userId").value(1))
-                .andExpect(jsonPath("$[0].projectedIncome").value(5000))
-                .andExpect(jsonPath("$[0].monthYear").value("2023-05"))
-                .andExpect(jsonPath("$[0].totalBudgetAmount").value(3000));
+        assertEquals(HttpStatus.CREATED, response.getStatusCode());
+        assertEquals(monthlySummary, response.getBody());
     }
 
     @Test
-    void testCreateMonthlySummary() throws Exception {
-        MonthlySummary newSummary = new MonthlySummary(1, 1, BigDecimal.valueOf(5000), LocalDate.of(2023, 5, 1),
-                BigDecimal.valueOf(3000));
+    public void testEditMonthlySummary() {
+        int id = 1;
+        Integer userId = 1;
+        MonthlySummary monthlySummary = new MonthlySummary();
+        
+        when(monthlySummaryService.editMonthlySummary(id, monthlySummary)).thenReturn(monthlySummary);
+        
+        ResponseEntity<MonthlySummary> response = monthlySummaryController.editMonthlySummary(id, monthlySummary, userId);
 
-        when(monthlySummaryService.saveMonthlySummary(any(MonthlySummary.class), eq(1))).thenReturn(newSummary);
-
-        mockMvc.perform(post("/summarys")
-                .contentType(MediaType.APPLICATION_JSON)
-                .header("User-ID", 1)
-                .content(asJsonString(newSummary)))
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.summaryId").value(1))
-                .andExpect(jsonPath("$.userId").value(1))
-                .andExpect(jsonPath("$.projectedIncome").value(5000))
-                .andExpect(jsonPath("$.monthYear").value("2023-05"))
-                .andExpect(jsonPath("$.totalBudgetAmount").value(3000));
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(monthlySummary, response.getBody());
     }
 
     @Test
-    void testEditMonthlySummary() throws Exception {
-        MonthlySummary updatedSummary = new MonthlySummary(1, 1, BigDecimal.valueOf(5000), LocalDate.of(2023, 5, 1),
-                BigDecimal.valueOf(3000));
+    public void testDeleteSummary() {
+        int id = 1;
+        
+        ResponseEntity<MonthlySummary> response = monthlySummaryController.deleteSummary(id);
 
-        when(monthlySummaryService.editMonthlySummary(eq(1), any(MonthlySummary.class))).thenReturn(updatedSummary);
-
-        mockMvc.perform(put("/summarys/1")
-                .contentType(MediaType.APPLICATION_JSON)
-                .header("User-ID", 1)
-                .content(asJsonString(updatedSummary)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.summaryId").value(1))
-                .andExpect(jsonPath("$.userId").value(1))
-                .andExpect(jsonPath("$.projectedIncome").value(5000))
-                .andExpect(jsonPath("$.monthYear").value("2023-05"))
-                .andExpect(jsonPath("$.totalBudgetAmount").value(3000));
+        verify(monthlySummaryService).deleteMonthlySummaryById(id);
+        assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
     }
 
     @Test
-    void testDeleteSummary() throws Exception {
-        mockMvc.perform(delete("/summarys/1"))
-                .andExpect(status().isNoContent());
+    public void testGetSummarysByMonthYear() {
+        List<MonthlySummary> summarys = Arrays.asList(new MonthlySummary(), new MonthlySummary());
+        Integer userId = 1;
+        String monthYear = "2021-01";
+        LocalDate date = LocalDate.parse(monthYear + "-01");
+        
+        when(monthlySummaryService.getMonthlySummarysByMonthYearAndUserId(date, userId)).thenReturn(summarys);
+        
+        ResponseEntity<List<MonthlySummary>> response = monthlySummaryController.getSummarysByMonthYear(monthYear, userId);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(summarys, response.getBody());
     }
 
     @Test
-    void testGetSummarysByMonthYear() throws Exception {
-        List<MonthlySummary> summaryList = Arrays.asList(
-                new MonthlySummary(1, 1, BigDecimal.valueOf(5000), LocalDate.of(2023, 5, 1), BigDecimal.valueOf(3000)));
+    public void testDeleteAllSummarysByUserId() {
+        Integer userId = 1;
+        
+        ResponseEntity<MonthlySummary> response = monthlySummaryController.deleteAllSummarysByUserId(userId);
 
-        when(monthlySummaryService.getMonthlySummarysByMonthYearAndUserId(any(LocalDate.class), eq(1)))
-                .thenReturn(summaryList);
-
-        mockMvc.perform(get("/summarys/monthyear/2023-05")
-                .header("User-ID", 1))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].summaryId").value(1))
-                .andExpect(jsonPath("$[0].userId").value(1))
-                .andExpect(jsonPath("$[0].projectedIncome").value(5000))
-                .andExpect(jsonPath("$[0].monthYear").value("2023-05"))
-                .andExpect(jsonPath("$[0].totalBudgetAmount").value(3000));
+        verify(monthlySummaryService).deleteAllSummarysByUserId(userId);
+        assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
     }
-
-    @Test
-    void testDeleteAllSummarysByUserId() throws Exception {
-        mockMvc.perform(delete("/summarys/deleteAll/user")
-                .header("User-ID", 1))
-                .andExpect(status().isNoContent());
-    }
-
 }

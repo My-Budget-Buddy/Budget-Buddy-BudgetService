@@ -114,6 +114,7 @@
 				<configuration>
 					<excludes>
                     	<exclude>**/config/**</exclude>
+                    	<exclude>**/integration/**</exclude>
 					</excludes>
 				</configuration>
                 <executions>

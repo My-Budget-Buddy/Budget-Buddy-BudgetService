@@ -23,6 +23,7 @@ import org.mockito.MockitoAnnotations;
 
 import com.skillstorm.budgetservice.models.MonthlySummary;
 import com.skillstorm.budgetservice.repositories.MonthlySummaryRepository;
+import com.skillstorm.budgetservice.services.MonthlySummaryService;
 
 public class MonthlySummaryServiceTest {
 
