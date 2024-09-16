@@ -1,4 +1,4 @@
-package com.skillstorm.budgetservice.services;
+package com.skillstorm.budgetservice.unit.services;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
@@ -20,6 +20,7 @@ import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.loadbalancer.LoadBalancerClient;
 
 import com.skillstorm.budgetservice.dto.TransactionDTO;
+import com.skillstorm.budgetservice.services.TranscationService;
 
 public class TransactionServiceTest {
 

@@ -1,4 +1,4 @@
-package com.skillstorm.budgetservice.controllers;
+package com.skillstorm.budgetservice.integration.controllers;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -27,6 +27,7 @@ import org.springframework.web.context.WebApplicationContext;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.skillstorm.budgetservice.controllers.BucketsController;
 import com.skillstorm.budgetservice.models.Buckets;
 import com.skillstorm.budgetservice.services.BucketsService;
 
@@ -37,7 +38,7 @@ import java.util.Arrays;
 import java.util.List;
 
 @WebMvcTest(BucketsController.class)
-public class BucketControllerTest {
+public class BucketControllerIntegrationTest {
 
     @Autowired
     private MockMvc mockMvc;

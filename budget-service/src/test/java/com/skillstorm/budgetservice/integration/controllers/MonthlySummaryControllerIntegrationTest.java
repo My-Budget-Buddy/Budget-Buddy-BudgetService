@@ -1,4 +1,4 @@
-package com.skillstorm.budgetservice.controllers;
+package com.skillstorm.budgetservice.integration.controllers;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -25,11 +25,12 @@ import org.springframework.web.context.WebApplicationContext;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.skillstorm.budgetservice.controllers.MonthlySummaryController;
 import com.skillstorm.budgetservice.models.MonthlySummary;
 import com.skillstorm.budgetservice.services.MonthlySummaryService;
 
 @WebMvcTest(MonthlySummaryController.class)
-public class MonthlySummaryControllerTest {
+public class MonthlySummaryControllerIntegrationTest {
 
     @Autowired
     private MockMvc mockMvc;
