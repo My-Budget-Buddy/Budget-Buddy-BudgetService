@@ -1,4 +1,4 @@
-package com.skillstorm.budgetservice.controllers;
+package com.skillstorm.budgetservice.unit.controllers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.verify;
@@ -17,6 +17,7 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import com.skillstorm.budgetservice.controllers.MonthlySummaryController;
 import com.skillstorm.budgetservice.models.MonthlySummary;
 import com.skillstorm.budgetservice.services.MonthlySummaryService;
 

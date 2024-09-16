@@ -114,24 +114,28 @@
 				<configuration>
 					<excludes>
                     	<exclude>**/config/**</exclude>
-                    	<exclude>**/integration/**</exclude>
 					</excludes>
 				</configuration>
                 <executions>
+					<!-- Unit Tests -->
                     <execution>
+						<id>default-prepare-agent</id>
                         <goals>
                             <goal>prepare-agent</goal>
                         </goals>
                     </execution>
                     <!-- attached to Maven test phase -->
                     <execution>
-                        <id>report</id>
+                        <id>report-unit-test</id>
                         <phase>test</phase>
                         <goals>
                             <goal>report</goal>
-                            <goal>check</goal>
+							<goal>check</goal>
                         </goals>
                         <configuration>
+							<excludes>
+								<exclude>**/integration/**</exclude>
+							</excludes>
 							<rules>
                           	  	<rule>
                           	  	  	<limits>

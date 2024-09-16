@@ -1,4 +1,4 @@
-package com.skillstorm.budgetservice.models;
+package com.skillstorm.budgetservice.unit.models;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
