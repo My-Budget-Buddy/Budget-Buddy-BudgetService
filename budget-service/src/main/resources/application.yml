@@ -6,9 +6,9 @@ spring:
   application:
     name: budget-service
   datasource:
-    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/my-budget-buddy}
-    username: ${DATABASE_USERNAME:buddyuser}
-    password: ${DATABASE_PASSWORD:buddytest}
+    url: ${DATABASE_URL:jdbc:postgresql://localhost:5433/budget_service}
+    username: ${DATABASE_USERNAME:postgres}
+    password: ${DATABASE_PASSWORD:}
 
   jpa:
     properties:
