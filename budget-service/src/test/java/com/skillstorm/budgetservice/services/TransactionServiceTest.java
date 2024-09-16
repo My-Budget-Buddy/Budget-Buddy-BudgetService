@@ -1,116 +1,151 @@
 package com.skillstorm.budgetservice.services;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.math.BigDecimal;
+import java.lang.reflect.Field;
 import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.Arrays;
 
-import org.aspectj.lang.annotation.After;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.client.RestClientTest;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.loadbalancer.LoadBalancerClient;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.test.web.client.MockRestServiceServer;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClient;
+import org.springframework.web.client.RestClient.RequestHeadersSpec;
+import org.springframework.web.client.RestClient.RequestHeadersUriSpec;
+import org.springframework.web.client.RestClient.ResponseSpec;
 
 import com.skillstorm.budgetservice.dto.TransactionDTO;
 
-@RestClientTest(TranscationService.class)
 public class TransactionServiceTest {
 
     @Mock
     private LoadBalancerClient loadBalancerClient;
 
-    // @Mock
-    // private RestClient restClient;
-    @Autowired
-    private MockRestServiceServer server;
-
     @InjectMocks
-    private TranscationService transactionSvc;
+    private TranscationService transcationService;
+
     private AutoCloseable closeable;
 
     @BeforeEach
     public void setup() {
         closeable = org.mockito.MockitoAnnotations.openMocks(this);
-        // restClient = RestClient.builder().build();
-    }
+    }  
 
     @AfterEach
     public void tearDown() throws Exception {
         closeable.close();
     }
 
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     @Test
-    public void getTransactionsExcludingIncomeTest() {
+    public void testGetTransactionsExcludingIncomeTest() throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
+        // given
         int userId = 1;
-        ServiceInstance serviceInstance = new TestServiceInstance();
-        when(loadBalancerClient.choose(any(String.class))).thenReturn(serviceInstance);
-
-        // this.server.expect(requestTo("/transactionsPrivate/budget/" + userId))
-        //   .andRespond(withSuccess(detailsString, MediaType.APPLICATION_JSON));
-
-        List<TransactionDTO> expected = new ArrayList<>();
-        // when(restClient.get().uri(any(String.class)).retrieve().body(new ParameterizedTypeReference<List<TransactionDTO>> () {})).thenReturn(expected);
-
-        List<TransactionDTO> response = transactionSvc.getTransactionsExcludingIncome(userId);
+        String transactionServiceString = "transaction-service";
+        String uri = "http://localhost:8083";
+        List<TransactionDTO> expected = Arrays.asList(new TransactionDTO(), new TransactionDTO());
         
+        // mocks service instance and rest client
+        ServiceInstance instance = mock(ServiceInstance.class);
+        RestClient restClient = mock(RestClient.class);
+        RequestHeadersUriSpec requestHeadersUriSpec = mock(RequestHeadersUriSpec.class);
+        RequestHeadersSpec requestBodySpec = mock(RequestHeadersSpec.class);
+        ResponseSpec responseSpec = mock(ResponseSpec.class);
+
+        // uses java reflect to access information
+        Field restClientField = TranscationService.class.getDeclaredField("restClient");
+        restClientField.setAccessible(true);
+        restClientField.set(transcationService, restClient);
+
+        // when
+        when(loadBalancerClient.choose(transactionServiceString)).thenReturn(instance);
+
+        when(instance.getUri()).thenReturn(URI.create(uri));
+
+        when(restClient.get()).thenReturn(requestHeadersUriSpec);
+        when(requestHeadersUriSpec.uri(anyString())).thenReturn(requestBodySpec);
+        when(requestBodySpec.retrieve()).thenReturn(responseSpec);
+        when(responseSpec.body(any(ParameterizedTypeReference.class))).thenReturn(expected);
+
+        // then
+        List<TransactionDTO> response = transcationService.getTransactionsExcludingIncome(userId);
 
         assertEquals(expected, response);
+        verify(loadBalancerClient).choose(transactionServiceString);
+        verify(instance).getUri();
+        verify(restClient).get();
     }
 
-    private class TestServiceInstance implements ServiceInstance {
+    @Test
+    public void testGetTransactionsExcludingIncomeTestIllegalStateException() throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
+        // given
+        int userId = 1;
+        String transactionServiceString = "transaction-service";
+        
+        // when
+        when(loadBalancerClient.choose(transactionServiceString)).thenReturn(null);
 
-        @Override
-        public String getServiceId() {
-            throw new UnsupportedOperationException("Unimplemented method 'getServiceId'");
-        }
+        // then
+        IllegalStateException exception = assertThrows(IllegalStateException.class, () -> {
+            transcationService.getTransactionsExcludingIncome(userId);
+        });
 
-        @Override
-        public String getHost() {
-            throw new UnsupportedOperationException("Unimplemented method 'getHost'");
-        }
+        assertEquals("No instances available for transaction_service", exception.getMessage());
+        verify(loadBalancerClient).choose(transactionServiceString);
+    }
 
-        @Override
-        public int getPort() {
-            throw new UnsupportedOperationException("Unimplemented method 'getPort'");
-        }
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @Test
+    public void testGetTransactionsExcludingIncomeTestHttpClientErrorException() throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
+        // given
+        int userId = 1;
+        String transactionServiceString = "transaction-service";
+        String uri = "http://localhost:8083";
+        List<TransactionDTO> expected = Arrays.asList();
+        
+        // mocks service instance and rest client
+        ServiceInstance instance = mock(ServiceInstance.class);
+        RestClient restClient = mock(RestClient.class);
+        RequestHeadersUriSpec requestHeadersUriSpec = mock(RequestHeadersUriSpec.class);
+        RequestHeadersSpec requestBodySpec = mock(RequestHeadersSpec.class);
+        ResponseSpec responseSpec = mock(ResponseSpec.class);
 
-        @Override
-        public boolean isSecure() {
-            throw new UnsupportedOperationException("Unimplemented method 'isSecure'");
-        }
+        // uses java reflect to access information
+        Field restClientField = TranscationService.class.getDeclaredField("restClient");
+        restClientField.setAccessible(true);
+        restClientField.set(transcationService, restClient);
 
-        @Override
-        public URI getUri() {
-            try {
-                URI uri = new URI("http://localhost:8083");
-                return uri;
-            } catch (URISyntaxException e) {
-                e.printStackTrace();
-                return null;
-            }
-        }
+        // when
+        when(loadBalancerClient.choose(transactionServiceString)).thenReturn(instance);
 
-        @Override
-        public Map<String, String> getMetadata() {
-            throw new UnsupportedOperationException("Unimplemented method 'getMetadata'");
-        }
+        when(instance.getUri()).thenReturn(URI.create(uri));
 
+        when(restClient.get()).thenReturn(requestHeadersUriSpec);
+        when(requestHeadersUriSpec.uri(anyString())).thenReturn(requestBodySpec);
+        when(requestBodySpec.retrieve()).thenThrow(new HttpClientErrorException(HttpStatus.BAD_REQUEST));
+        when(responseSpec.body(any(ParameterizedTypeReference.class))).thenReturn(expected);
+
+        // then
+        List<TransactionDTO> response = transcationService.getTransactionsExcludingIncome(userId);
+
+        assertEquals(expected, response);
+        verify(loadBalancerClient).choose(transactionServiceString);
+        verify(instance).getUri();
+        verify(restClient).get();
     }
 
 }
