@@ -38,7 +38,7 @@ import java.util.Arrays;
 import java.util.List;
 
 @WebMvcTest(BucketsController.class)
-public class BucketControllerTest {
+public class BucketControllerIntegrationTest {
 
     @Autowired
     private MockMvc mockMvc;

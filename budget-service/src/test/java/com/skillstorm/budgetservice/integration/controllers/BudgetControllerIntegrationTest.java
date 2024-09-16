@@ -29,7 +29,7 @@ import com.skillstorm.budgetservice.dto.TransactionDTO;
 import com.skillstorm.budgetservice.models.Budget;
 import com.skillstorm.budgetservice.services.BudgetService;
 
-public class BudgetControllerTest {
+public class BudgetControllerIntegrationTest {
 
         private MockMvc mockMvc;
 

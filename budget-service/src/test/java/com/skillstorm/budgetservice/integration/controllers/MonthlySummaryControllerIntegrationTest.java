@@ -30,7 +30,7 @@ import com.skillstorm.budgetservice.models.MonthlySummary;
 import com.skillstorm.budgetservice.services.MonthlySummaryService;
 
 @WebMvcTest(MonthlySummaryController.class)
-public class MonthlySummaryControllerTest {
+public class MonthlySummaryControllerIntegrationTest {
 
     @Autowired
     private MockMvc mockMvc;
