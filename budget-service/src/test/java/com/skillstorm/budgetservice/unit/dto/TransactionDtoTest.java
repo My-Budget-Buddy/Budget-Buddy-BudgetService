@@ -1,10 +1,12 @@
-package com.skillstorm.budgetservice.dto;
+package com.skillstorm.budgetservice.unit.dto;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 import org.junit.jupiter.api.Test;
 import org.meanbean.test.BeanVerifier;
+
+import com.skillstorm.budgetservice.dto.TransactionDTO;
 
 public class TransactionDtoTest {
     @Test

@@ -1,4 +1,4 @@
-package com.skillstorm.budgetservice.services;
+package com.skillstorm.budgetservice.unit.services;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -29,6 +29,7 @@ import org.springframework.web.client.RestClient.RequestHeadersUriSpec;
 import org.springframework.web.client.RestClient.ResponseSpec;
 
 import com.skillstorm.budgetservice.dto.TransactionDTO;
+import com.skillstorm.budgetservice.services.TranscationService;
 
 public class TransactionServiceTest {
 
