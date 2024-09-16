@@ -1,4 +1,4 @@
-package com.skillstorm.budgetservice.services;
+package com.skillstorm.budgetservice.unit.services;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -22,6 +22,7 @@ import org.mockito.MockitoAnnotations;
 
 import com.skillstorm.budgetservice.models.Buckets;
 import com.skillstorm.budgetservice.repositories.BucketsRepository;
+import com.skillstorm.budgetservice.services.BucketsService;
 
 public class BucketsServiceTest {
 

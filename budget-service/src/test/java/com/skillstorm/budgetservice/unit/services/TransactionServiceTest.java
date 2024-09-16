@@ -1,4 +1,4 @@
-package com.skillstorm.budgetservice.services;
+package com.skillstorm.budgetservice.unit.services;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
@@ -28,6 +28,7 @@ import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.web.client.RestClient;
 
 import com.skillstorm.budgetservice.dto.TransactionDTO;
+import com.skillstorm.budgetservice.services.TranscationService;
 
 @RestClientTest(TranscationService.class)
 public class TransactionServiceTest {
