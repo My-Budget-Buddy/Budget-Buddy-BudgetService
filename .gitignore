@@ -1,5 +1,0 @@
-### VS Code ###
-.vscode/
-
-### application.yml###
-budget-service/src/main/resources/application.yml
