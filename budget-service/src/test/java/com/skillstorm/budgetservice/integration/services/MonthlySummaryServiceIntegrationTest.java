@@ -4,8 +4,6 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 
 import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.AfterEach;
@@ -43,25 +41,33 @@ public class MonthlySummaryServiceIntegrationTest {
         monthlySumRepository.deleteAll();
     }
 
+    /**
+     * Test case for findAllMonthlySummarys method in MonthlySummaryService class - Successfully finds all monthly summarys.
+     */
     @Test
     public void findAllMonthlySummarysTest_Success() {
-        MonthlySummary monthlySummary1 = new MonthlySummary(1, 1, BigDecimal.valueOf(80000.00), LocalDate.of(2021, 1, 1), new BigDecimal(5000));
-        MonthlySummary monthlySummary2 = new MonthlySummary(2, 2, BigDecimal.valueOf(100000.00), LocalDate.of(2022, 1, 1), new BigDecimal(8000));
+        MonthlySummary monthlySummary1 = new MonthlySummary(1, BigDecimal.valueOf(80000.00), LocalDate.of(2021, 1, 1), new BigDecimal(5000));
+        MonthlySummary monthlySummary2 = new MonthlySummary(2, BigDecimal.valueOf(100000.00), LocalDate.of(2022, 1, 1), new BigDecimal(8000));
 
         monthlySumRepository.save(monthlySummary1);
         monthlySumRepository.save(monthlySummary2);
 
+        System.out.println(monthlySummary1);
+
         List<MonthlySummary> result = monthlySumSvc.findAllMonthlySummarys();
 
         assertTrue(result.size() == 2);    
-        // assertTrue(result.contains(monthlySummary1));
-        // assertTrue(result.contains(monthlySummary2));
+        assertTrue(result.contains(monthlySummary1));
+        assertTrue(result.contains(monthlySummary2));
     }
 
+    /**
+     * Test case for findMonthlySummarysByUserId method in MonthlySummaryService class - Successfully finds monthly summarys by user ID.
+     */
     @Test
     public void findMonthlySummarysByUserIdTest_Success() {
-        MonthlySummary monthlySummary1 = new MonthlySummary(1, 1, BigDecimal.valueOf(80000.00), LocalDate.of(2021, 1, 1), new BigDecimal(5000));
-        MonthlySummary monthlySummary2 = new MonthlySummary(2, 2, BigDecimal.valueOf(100000.00), LocalDate.of(2022, 1, 1), new BigDecimal(8000));
+        MonthlySummary monthlySummary1 = new MonthlySummary(1, BigDecimal.valueOf(80000.00), LocalDate.of(2021, 1, 1), new BigDecimal(5000));
+        MonthlySummary monthlySummary2 = new MonthlySummary(2, BigDecimal.valueOf(100000.00), LocalDate.of(2022, 1, 1), new BigDecimal(8000));
 
         monthlySumRepository.save(monthlySummary1);
         monthlySumRepository.save(monthlySummary2);
@@ -69,12 +75,15 @@ public class MonthlySummaryServiceIntegrationTest {
         List<MonthlySummary> result = monthlySumSvc.findMonthlySummarysByUserId(1);
 
         assertTrue(result.size() == 1);    
-        // assertTrue(result.contains(monthlySummary1));
+        assertTrue(result.contains(monthlySummary1));
     }
 
+    /**
+     * Test case for saveMonthlySummary method in MonthlySummaryService class - Successfully saves a monthly summary.
+     */
     @Test
     public void saveMonthlySummaryTest_Success() {
-        MonthlySummary monthlySummary = new MonthlySummary(1, 1, BigDecimal.valueOf(80000.00), LocalDate.of(2021, 1, 1), new BigDecimal(5000));
+        MonthlySummary monthlySummary = new MonthlySummary(1, BigDecimal.valueOf(80000.00), LocalDate.of(2021, 1, 1), new BigDecimal(5000));
 
         MonthlySummary result = monthlySumSvc.saveMonthlySummary(monthlySummary, 1);
 
@@ -85,9 +94,12 @@ public class MonthlySummaryServiceIntegrationTest {
         assertTrue(result.getTotalBudgetAmount().equals(BigDecimal.valueOf(5000)));
     }
 
+    /*
+     * Test case for editMonthlySummary method in MonthlySummaryService class - Successfully edits a monthly summary.
+     */
     @Test
     public void editMonthlySummaryTest_Success() {
-        MonthlySummary monthlySummary = new MonthlySummary(1, 1, BigDecimal.valueOf(80000.00), LocalDate.of(2021, 1, 1), new BigDecimal(5000));
+        MonthlySummary monthlySummary = new MonthlySummary(1, BigDecimal.valueOf(80000.00), LocalDate.of(2021, 1, 1), new BigDecimal(5000));
 
         MonthlySummary result = monthlySumSvc.saveMonthlySummary(monthlySummary, 1);
 
@@ -98,33 +110,26 @@ public class MonthlySummaryServiceIntegrationTest {
         assertTrue(result.getTotalBudgetAmount().equals(BigDecimal.valueOf(5000)));
     }
 
+    /*
+     * Test case for deleteMonthlySummaryById method in MonthlySummaryService class - Successfully deletes a monthly summary by its id.
+     */
     @Test
-    public void editMonthlySummaryTest_NotFound() {
-        MonthlySummary monthlySummary = new MonthlySummary(1, 1, BigDecimal.valueOf(80000.00), LocalDate.of(2021, 1, 1), new BigDecimal(5000));
+    public void deleteMonthlySummaryTest_Success() {
+        MonthlySummary monthlySummary = new MonthlySummary(1, BigDecimal.valueOf(80000.00), LocalDate.of(2021, 1, 1), new BigDecimal(5000));
 
-        MonthlySummary result = monthlySumSvc.saveMonthlySummary(monthlySummary, 0);
+        monthlySumRepository.save(monthlySummary);
 
-        // assertNull(result);
-        // assertTrue(result.getUserId() == 0);
-        // assertTrue(result.getProjectedIncome().equals(BigDecimal.valueOf(80000.00)));
-        // assertTrue(result.getMonthYear().equals(LocalDate.of(2021, 1, 1)));
-        // assertTrue(result.getTotalBudgetAmount().equals(BigDecimal.valueOf(5000)));
+        monthlySumSvc.deleteMonthlySummaryById(monthlySummary.getSummaryId());
+
+        assertTrue(monthlySumRepository.findAll().isEmpty());
     }
 
-    // @Test
-    // public void deleteMonthlySummaryTest_Success() {
-    //     MonthlySummary monthlySummary = new MonthlySummary(1, 1, BigDecimal.valueOf(80000.00), LocalDate.of(2021, 1, 1), new BigDecimal(5000));
-
-    //     monthlySumRepository.save(monthlySummary);
-
-    //     monthlySumSvc.deleteMonthlySummaryById(1);
-
-    //     assertTrue(monthlySumRepository.findAll().isEmpty());
-    // }
-
+    /*
+     * Test case for deleteMonthlySummaryById method in MonthlySummaryService class - Does not find a monthly summary to be deleted by its id.
+     */
     @Test
     public void deleteMonthlySummaryTest_NotFound() {
-        MonthlySummary monthlySummary = new MonthlySummary(1, 1, BigDecimal.valueOf(80000.00), LocalDate.of(2021, 1, 1), new BigDecimal(5000));
+        MonthlySummary monthlySummary = new MonthlySummary(1, BigDecimal.valueOf(80000.00), LocalDate.of(2021, 1, 1), new BigDecimal(5000));
 
         monthlySumRepository.save(monthlySummary);
 
@@ -133,10 +138,13 @@ public class MonthlySummaryServiceIntegrationTest {
         assertTrue(monthlySumRepository.findAll().size() == 1);
     }
 
+    /**
+     * Test case for getMonthlySummarysByMonthYearAndUserId method in MonthlySummaryService class - Successfully finds monthly summarys by month, year, and user ID.
+     */
     @Test
     public void getMonthlySummarysByMonthYearAndUserIdTest_Success() {
-        MonthlySummary monthlySummary1 = new MonthlySummary(1, 1, BigDecimal.valueOf(80000.00), LocalDate.of(2021, 1, 1), new BigDecimal(5000));
-        MonthlySummary monthlySummary2 = new MonthlySummary(2, 2, BigDecimal.valueOf(100000.00), LocalDate.of(2022, 1, 1), new BigDecimal(8000));
+        MonthlySummary monthlySummary1 = new MonthlySummary(1, BigDecimal.valueOf(80000.00), LocalDate.of(2021, 1, 1), new BigDecimal(5000));
+        MonthlySummary monthlySummary2 = new MonthlySummary(2, BigDecimal.valueOf(100000.00), LocalDate.of(2022, 1, 1), new BigDecimal(8000));
 
         monthlySumRepository.save(monthlySummary1);
         monthlySumRepository.save(monthlySummary2);
@@ -144,12 +152,15 @@ public class MonthlySummaryServiceIntegrationTest {
         List<MonthlySummary> result = monthlySumSvc.getMonthlySummarysByMonthYearAndUserId(LocalDate.of(2021, 1, 1), 1);
 
         assertTrue(result.size() == 1);
-        // assertTrue(result.contains(monthlySummary1));
+        assertTrue(result.contains(monthlySummary1));
     }
 
+    /**
+     * Test case for getMonthlySummarysByMonthYearAndUserId method in MonthlySummaryService class - Does not find any monthly summarys by month, year, and user ID.
+     */
     @Test
     public void getMonthlySummarysByMonthYearAndUserIdTest_NotFound() {
-        MonthlySummary monthlySummary1 = new MonthlySummary(1, 1, BigDecimal.valueOf(80000.00), LocalDate.of(2021, 1, 1), new BigDecimal(5000));
+        MonthlySummary monthlySummary1 = new MonthlySummary(1, BigDecimal.valueOf(80000.00), LocalDate.of(2021, 1, 1), new BigDecimal(5000));
         monthlySumRepository.save(monthlySummary1);
 
         List<MonthlySummary> result = monthlySumSvc.getMonthlySummarysByMonthYearAndUserId(LocalDate.of(2022, 1, 1), 1);
@@ -157,10 +168,13 @@ public class MonthlySummaryServiceIntegrationTest {
         assertTrue(result.isEmpty());
     }
 
+    /**
+     * Test case for deleteAllSummarysByUserId method in MonthlySummaryService class - Successfully deletes all monthly summarys by user ID.
+     */
     @Test
     public void deleteAllSummarysByUserIdTest_Success() {
-        MonthlySummary monthlySummary1 = new MonthlySummary(1, 1, BigDecimal.valueOf(80000.00), LocalDate.of(2021, 1, 1), new BigDecimal(5000));
-        MonthlySummary monthlySummary2 = new MonthlySummary(2, 1, BigDecimal.valueOf(100000.00), LocalDate.of(2022, 1, 1), new BigDecimal(8000));
+        MonthlySummary monthlySummary1 = new MonthlySummary(1, BigDecimal.valueOf(80000.00), LocalDate.of(2021, 1, 1), new BigDecimal(5000));
+        MonthlySummary monthlySummary2 = new MonthlySummary(1, BigDecimal.valueOf(100000.00), LocalDate.of(2022, 1, 1), new BigDecimal(8000));
 
         monthlySumRepository.save(monthlySummary1);
         monthlySumRepository.save(monthlySummary2);
@@ -170,9 +184,12 @@ public class MonthlySummaryServiceIntegrationTest {
         assertTrue(monthlySumRepository.findAll().isEmpty());
     }
 
+    /**
+     * Test case for deleteAllSummarysByUserId method in MonthlySummaryService class - Does not find any monthly summarys to be deleted by user ID.
+     */
     @Test
     public void deleteAllSummarysByUserIdTest_NotFound() {
-        MonthlySummary monthlySummary1 = new MonthlySummary(1, 1, BigDecimal.valueOf(80000.00), LocalDate.of(2021, 1, 1), new BigDecimal(5000));
+        MonthlySummary monthlySummary1 = new MonthlySummary(1, BigDecimal.valueOf(80000.00), LocalDate.of(2021, 1, 1), new BigDecimal(5000));
         monthlySumRepository.save(monthlySummary1);
 
         monthlySumSvc.deleteAllSummarysByUserId(2);
