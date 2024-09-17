@@ -1,175 +1,125 @@
 package com.skillstorm.budgetservice.integration.controllers;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.Arrays;
-import java.util.List;
 
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.skillstorm.budgetservice.controllers.BudgetController;
-import com.skillstorm.budgetservice.dto.TransactionDTO;
 import com.skillstorm.budgetservice.models.Budget;
-import com.skillstorm.budgetservice.services.BudgetService;
 
+@SpringBootTest
+@AutoConfigureMockMvc
+@Transactional
 public class BudgetControllerIntegrationTest {
 
-        private MockMvc mockMvc;
+	@Autowired
+	private MockMvc mockMvc;
 
-        @Mock
-        private BudgetService budgetService;
+	// Utility method to convert an object to a JSON string
+	private static String asJsonString(final Object obj) {
+		try {
+			ObjectMapper mapper = new ObjectMapper();
+			mapper.registerModule(new JavaTimeModule()); // Register the JSR310 module
+			return mapper.writeValueAsString(obj);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
 
-        @InjectMocks
-        private BudgetController budgetController;
-        private AutoCloseable closeable;
+	@Test
+	void testFindAllBudgets() throws Exception {
 
-        // Utility method to convert an object to a JSON string
-        private static String asJsonString(final Object obj) {
-                try {
-                        ObjectMapper mapper = new ObjectMapper();
-                        mapper.registerModule(new JavaTimeModule()); // Register the JSR310 module
-                        return mapper.writeValueAsString(obj);
-                } catch (Exception e) {
-                        throw new RuntimeException(e);
-                }
-        }
+		mockMvc.perform(get("/budgets"))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.length()").value(6));
+	};
 
-        @BeforeEach
-        void setUp() {
-                closeable = MockitoAnnotations.openMocks(this);
-                mockMvc = MockMvcBuilders.standaloneSetup(budgetController).build();
-        }
+	@Test
+	void testGetBudgetsById() throws Exception {
 
-        @AfterEach
-        public void tearDown() throws Exception {
-                closeable.close();
-        }
+		mockMvc.perform(get("/budgets/userBudgets")
+				.header("User-ID", 1))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.length()").value(2));
+	}
 
-        @Test
-        void testFindAllBudgets() throws Exception {
-                List<Budget> budgets = Arrays.asList(
-                                new Budget(1, 1, "Food", BigDecimal.valueOf(100), true, LocalDate.of(2023, 5, 1),
-                                                "Note 1", null),
-                                new Budget(2, 2, "Travel", BigDecimal.valueOf(200), false, LocalDate.of(2023, 6, 1),
-                                                "Note 2", null));
+	@Test
+	void testCreateBudget() throws Exception {
 
-                when(budgetService.findAllBudgets()).thenReturn(budgets);
+		Budget budget = new Budget(7, 1, "Food", BigDecimal.valueOf(100), true, LocalDate.of(2023, 5, 1), "Note 1", null);
 
-                mockMvc.perform(get("/budgets"))
-                                .andExpect(status().isOk())
-                                .andExpect(jsonPath("$[0].budgetId").value(1))
-                                .andExpect(jsonPath("$[0].category").value("Food"))
-                                .andExpect(jsonPath("$[1].budgetId").value(2))
-                                .andExpect(jsonPath("$[1].category").value("Travel"));
-        };
+		mockMvc.perform(post("/budgets")
+				.contentType(MediaType.APPLICATION_JSON)
+				.header("User-ID", 1)
+				.content(asJsonString(budget)))
+				.andExpect(status().isCreated())
+				.andExpect(jsonPath("$.userId").value(1))
+				.andExpect(jsonPath("$.category").value("Food"))
+				.andExpect(jsonPath("$.totalAmount").value(100))
+				.andExpect(jsonPath("$.isReserved").value(true))
+				.andExpect(jsonPath("$.monthYear").value("2023-05"))
+				.andExpect(jsonPath("$.notes").value("Note 1"));
 
-        @Test
-        void testGetBudgetsById() throws Exception {
-                List<Budget> budgets = Arrays.asList(
-                                new Budget(1, 1, "Food", BigDecimal.valueOf(100), true, LocalDate.of(2023, 5, 1),
-                                                "Note 1", null));
+	}
 
-                when(budgetService.findBudgetsByUserId(1)).thenReturn(budgets);
+	@Test
+	void testEditBudget() throws Exception {
+		Budget budget = new Budget(1, 1, "Food", BigDecimal.valueOf(100), true, LocalDate.of(2023, 5, 1), "Note 1", null);
 
-                mockMvc.perform(get("/budgets/userBudgets")
-                                .header("User-ID", 1))
-                                .andExpect(status().isOk())
-                                .andExpect(jsonPath("$[0].budgetId").value(1))
-                                .andExpect(jsonPath("$[0].category").value("Food"));
-        }
+		mockMvc.perform(put("/budgets/1")
+				.contentType(MediaType.APPLICATION_JSON)
+				.header("User-ID", 1)
+				.content(asJsonString(budget)))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.budgetId").value(1))
+				.andExpect(jsonPath("$.category").value("Food"))
+				.andExpect(jsonPath("$.totalAmount").value(100))
+				.andExpect(jsonPath("$.isReserved").value(true))
+				.andExpect(jsonPath("$.monthYear").value("2023-05"))
+				.andExpect(jsonPath("$.notes").value("Note 1"));
+	}
 
-        @Test
-        void testCreateBudget() throws Exception {
+	@Test
+	void testDeleteBudget() throws Exception {
+		mockMvc.perform(delete("/budgets/1")
+				.header("User-ID", "1"))
+				.andExpect(status().isNoContent());
+	}
 
-                Budget budget = new Budget(1, 1, "Food", BigDecimal.valueOf(100), true, LocalDate.of(2023, 5, 1),
-                                "Note 1", null);
+	@Test
+	void testGetBudgetsByMonthYear() throws Exception {
 
-                when(budgetService.saveBudget(any(Budget.class), anyInt())).thenReturn(budget);
+		mockMvc.perform(get("/budgets/monthyear/2024-05")
+				.header("User-ID", 1))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.length()").value(2));
+	}
 
-                mockMvc.perform(post("/budgets")
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .header("User-ID", 1)
-                                .content(asJsonString(budget)))
-                                .andExpect(status().isCreated())
-                                .andExpect(jsonPath("$.budgetId").value(1))
-                                .andExpect(jsonPath("$.category").value("Food"));
-        }
+	@Test
+	void testGetTranscationsByMonthYear() throws Exception {
 
-        @Test
-        void testEditBudget() throws Exception {
-                Budget budget = new Budget(1, 1, "Food", BigDecimal.valueOf(100), true, LocalDate.of(2023, 5, 1),
-                                "Note 1", null);
+	mockMvc.perform(get("/budgets/transactions/2024-05")
+			.header("User-ID", 1))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.length()").value(8));
+	}
 
-                when(budgetService.editBudget(eq(1), any(Budget.class))).thenReturn(budget);
-
-                mockMvc.perform(put("/budgets/1")
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .header("User-ID", 1)
-                                .content(asJsonString(budget)))
-                                .andExpect(status().isOk())
-                                .andExpect(jsonPath("$.budgetId").value(1))
-                                .andExpect(jsonPath("$.category").value("Food"));
-        }
-
-        @Test
-        void testDeleteBudget() throws Exception {
-                mockMvc.perform(delete("/budgets/1")
-                                .header("User-ID", "1"))
-                                .andExpect(status().isNoContent());
-        }
-
-        @Test
-        void testGetBudgetsByMonthYear() throws Exception {
-                List<Budget> budgets = Arrays.asList(
-                                new Budget(1, 1, "Food", BigDecimal.valueOf(100), true, LocalDate.of(2023, 5, 1),
-                                                "Note 1", null));
-
-                when(budgetService.getBudgetsByMonthYearAndUserId(any(LocalDate.class), eq(1))).thenReturn(budgets);
-
-                mockMvc.perform(get("/budgets/monthyear/2023-05")
-                                .header("User-ID", 1))
-                                .andExpect(status().isOk())
-                                .andExpect(jsonPath("$[0].budgetId").value(1))
-                                .andExpect(jsonPath("$[0].category").value("Food"));
-        }
-
-        @Test
-        void testGetTranscationsByMonthYear() throws Exception {
-                List<TransactionDTO> transactions = Arrays.asList(
-                                new TransactionDTO(1, 1, 1, "Vendor1", 100.0, "Category1", "Description1",
-                                                LocalDate.of(2023, 5, 1)));
-
-                when(budgetService.findTransactionByMonthYear(any(LocalDate.class), eq(1))).thenReturn(transactions);
-
-                mockMvc.perform(get("/budgets/transactions/2023-05")
-                                .header("User-ID", 1))
-                                .andExpect(status().isOk())
-                                .andExpect(jsonPath("$[0].transactionId").value(1))
-                                .andExpect(jsonPath("$[0].category").value("Category1"));
-        }
-
-        @Test
-        void testDeleteAllBudgetsByUserId() throws Exception {
-                mockMvc.perform(delete("/budgets/deleteAll/user")
-                                .header("User-ID", 1))
-                                .andExpect(status().isNoContent());
-        }
+	@Test
+	void testDeleteAllBudgetsByUserId() throws Exception {
+		mockMvc.perform(delete("/budgets/deleteAll/user")
+				.header("User-ID", 1))
+				.andExpect(status().isNoContent());
+	}
 
 }

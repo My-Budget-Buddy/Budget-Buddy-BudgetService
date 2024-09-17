@@ -67,7 +67,6 @@ public class MonthlySummaryControllerIntegrationTest {
                 .header("User-ID", 1)
                 .content(asJsonString(newSummary)))
                 .andExpect(status().isCreated())
-                // .andExpect(jsonPath("$.summaryId").value(4))
                 .andExpect(jsonPath("$.userId").value(1))
                 .andExpect(jsonPath("$.projectedIncome").value(5000.00))
                 .andExpect(jsonPath("$.monthYear").value("2023-05"))
