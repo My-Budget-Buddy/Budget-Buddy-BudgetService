@@ -1,10 +1,9 @@
-FROM public.ecr.aws/c1x4i8c4/alpine:latest as build
+FROM maven:3.9.9-amazoncorretto-17 as build
 WORKDIR /app
-COPY budget-service/ /app
-RUN apk update && apk upgrade && apk add openjdk17-jdk maven && mvn clean package -DskipTests
+COPY . /app
+RUN mvn clean install -DskipTests
 
-FROM public.ecr.aws/c1x4i8c4/alpine:latest
-RUN apk update && apk upgrade && apk add openjdk17-jre
+FROM amazoncorretto:17-alpine
 WORKDIR /app
 COPY --from=build /app/target/*.jar /app/app.jar
 ENTRYPOINT ["java", "-jar", "/app/app.jar"]
