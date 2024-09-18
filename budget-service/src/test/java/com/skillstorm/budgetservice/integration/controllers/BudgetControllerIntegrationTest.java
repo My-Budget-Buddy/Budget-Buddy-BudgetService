@@ -1,22 +1,31 @@
 package com.skillstorm.budgetservice.integration.controllers;
 
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
+import java.util.Arrays;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.context.WebApplicationContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.skillstorm.budgetservice.dto.TransactionDTO;
 import com.skillstorm.budgetservice.models.Budget;
+import com.skillstorm.budgetservice.services.TransactionService;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -24,7 +33,13 @@ import com.skillstorm.budgetservice.models.Budget;
 public class BudgetControllerIntegrationTest {
 
 	@Autowired
+    private WebApplicationContext context;
+
+	@Autowired
 	private MockMvc mockMvc;
+
+	@MockBean
+	private TransactionService transactionService;
 
 	// Utility method to convert an object to a JSON string
 	private static String asJsonString(final Object obj) {
@@ -107,12 +122,22 @@ public class BudgetControllerIntegrationTest {
 	}
 
 	@Test
-	void testGetTranscationsByMonthYear() throws Exception {
+	void testGetTransactionsByMonthYear() throws Exception {
+		
+		// set up mockMvc for TransactionService
+		mockMvc = MockMvcBuilders.webAppContextSetup(context).build();
 
-	mockMvc.perform(get("/budgets/transactions/2024-05")
-			.header("User-ID", 1))
-			.andExpect(status().isOk())
-			.andExpect(jsonPath("$.length()").value(8));
+		TransactionDTO transactionDto = new TransactionDTO();
+		transactionDto.setDate(LocalDate.of(2024, 5, 1));
+		List<TransactionDTO> transactionDtos = Arrays.asList(transactionDto, transactionDto);
+
+		// if not mocked, return java.lang.IllegalStateException: No instances available for transaction_service
+		when(transactionService.getTransactionsExcludingIncome(1)).thenReturn(transactionDtos);
+
+		mockMvc.perform(get("/budgets/transactions/2024-05")
+				.header("User-ID", 1))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.length()").value(2));
 	}
 
 	@Test

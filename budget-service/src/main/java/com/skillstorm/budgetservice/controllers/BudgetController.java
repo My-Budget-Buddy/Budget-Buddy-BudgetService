@@ -21,7 +21,7 @@ import com.skillstorm.budgetservice.dto.TransactionDTO;
 import com.skillstorm.budgetservice.models.Buckets;
 import com.skillstorm.budgetservice.models.Budget;
 import com.skillstorm.budgetservice.services.BudgetService;
-import com.skillstorm.budgetservice.services.TranscationService;
+import com.skillstorm.budgetservice.services.TransactionService;
 
 @RestController
 @RequestMapping("/budgets")
@@ -124,7 +124,7 @@ public class BudgetController {
      * 
      */
     @GetMapping("transactions/{monthYear}")
-    public ResponseEntity<List<TransactionDTO>> getTranscationsByMonthYear(@PathVariable String monthYear,
+    public ResponseEntity<List<TransactionDTO>> getTransactionsByMonthYear(@PathVariable String monthYear,
             @RequestHeader(name = "User-ID") Integer headerUserId) {
 
         // Define a DateTimeFormatter to parse the date in the format yyyy-MM-dd

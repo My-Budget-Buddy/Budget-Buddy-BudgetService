@@ -13,12 +13,12 @@ import java.util.List;
 import com.skillstorm.budgetservice.dto.TransactionDTO;
 
 @Service
-public class TranscationService {
+public class TransactionService {
 
     private final LoadBalancerClient loadBalancerClient;
     private final RestClient restClient;
 
-    public TranscationService(LoadBalancerClient loadBalancerClient) {
+    public TransactionService(LoadBalancerClient loadBalancerClient) {
         this.loadBalancerClient = loadBalancerClient;
         this.restClient = RestClient.builder()
                 .build();

@@ -20,7 +20,7 @@ import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.loadbalancer.LoadBalancerClient;
 
 import com.skillstorm.budgetservice.dto.TransactionDTO;
-import com.skillstorm.budgetservice.services.TranscationService;
+import com.skillstorm.budgetservice.services.TransactionService;
 
 public class TransactionServiceTest {
 
@@ -28,7 +28,7 @@ public class TransactionServiceTest {
     private static LoadBalancerClient loadBalancerClient;
 
     @InjectMocks
-    private TranscationService transactionSvc;
+    private TransactionService transactionSvc;
 
     // @Test
     // public void getTransactionsExcludingIncomeTest() {

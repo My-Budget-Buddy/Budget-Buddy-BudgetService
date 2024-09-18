@@ -20,7 +20,7 @@ public class BudgetService {
     BudgetRepository budgetRepository;
 
     @Autowired
-    TranscationService transcationService;
+    TransactionService transactionService;
 
     public List<Budget> findAllBudgets() {
         return budgetRepository.findAll();
@@ -128,7 +128,7 @@ public class BudgetService {
      */
     public List<TransactionDTO> findTransactionByMonthYear(LocalDate monthYear, int userId) {
         // Retrieve all transactions for the given user, excluding income transactions
-        List<TransactionDTO> transactions = transcationService.getTransactionsExcludingIncome(userId);
+        List<TransactionDTO> transactions = transactionService.getTransactionsExcludingIncome(userId);
 
         // Filter transactions to only include those that match the specified month and
         // year

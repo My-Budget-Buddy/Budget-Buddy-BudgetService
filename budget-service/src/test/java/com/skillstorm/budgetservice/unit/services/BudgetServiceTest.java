@@ -26,7 +26,7 @@ import com.skillstorm.budgetservice.dto.TransactionDTO;
 import com.skillstorm.budgetservice.models.Budget;
 import com.skillstorm.budgetservice.repositories.BudgetRepository;
 import com.skillstorm.budgetservice.services.BudgetService;
-import com.skillstorm.budgetservice.services.TranscationService;
+import com.skillstorm.budgetservice.services.TransactionService;
 
 public class BudgetServiceTest {
 
@@ -34,7 +34,7 @@ public class BudgetServiceTest {
     private BudgetRepository budgetRepository;
 
     @Mock
-    private TranscationService transcationService;
+    private TransactionService transactionService;
 
     @InjectMocks
     private BudgetService budgetService;
@@ -158,7 +158,7 @@ public class BudgetServiceTest {
 
         List<TransactionDTO> transactionDTOs = Arrays.asList(transactionDTO1, transactionDTO2, transactionDTO1, transactionDTO3);
 
-        when(transcationService.getTransactionsExcludingIncome(anyInt())).thenReturn(transactionDTOs);
+        when(transactionService.getTransactionsExcludingIncome(anyInt())).thenReturn(transactionDTOs);
         
         List<TransactionDTO> response = budgetService.findTransactionByMonthYear(LocalDate.now(), 0);
 
