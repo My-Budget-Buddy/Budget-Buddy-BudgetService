@@ -1,4 +1,4 @@
-package com.skillstorm.budgetservice.unit.controllers;
+package com.skillstorm.budgetservice.controllers.unit;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.verify;

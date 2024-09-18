@@ -1,4 +1,4 @@
-package com.skillstorm.budgetservice.integration.services;
+package com.skillstorm.budgetservice.services.integration;
 
 import jakarta.transaction.Transactional;
 

@@ -1,4 +1,4 @@
-package com.skillstorm.budgetservice.unit.services;
+package com.skillstorm.budgetservice.services.unit;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -29,7 +29,7 @@ import org.springframework.web.client.RestClient.RequestHeadersUriSpec;
 import org.springframework.web.client.RestClient.ResponseSpec;
 
 import com.skillstorm.budgetservice.dto.TransactionDTO;
-import com.skillstorm.budgetservice.services.TranscationService;
+import com.skillstorm.budgetservice.services.TransactionService;
 
 public class TransactionServiceTest {
 
@@ -37,7 +37,7 @@ public class TransactionServiceTest {
     private LoadBalancerClient loadBalancerClient;
 
     @InjectMocks
-    private TranscationService transcationService;
+    private TransactionService transactionService;
 
     private AutoCloseable closeable;
 
@@ -68,9 +68,9 @@ public class TransactionServiceTest {
         ResponseSpec responseSpec = mock(ResponseSpec.class);
 
         // uses java reflect to access information
-        Field restClientField = TranscationService.class.getDeclaredField("restClient");
+        Field restClientField = TransactionService.class.getDeclaredField("restClient");
         restClientField.setAccessible(true);
-        restClientField.set(transcationService, restClient);
+        restClientField.set(transactionService, restClient);
 
         // when
         when(loadBalancerClient.choose(transactionServiceString)).thenReturn(instance);
@@ -83,7 +83,7 @@ public class TransactionServiceTest {
         when(responseSpec.body(any(ParameterizedTypeReference.class))).thenReturn(expected);
 
         // then
-        List<TransactionDTO> response = transcationService.getTransactionsExcludingIncome(userId);
+        List<TransactionDTO> response = transactionService.getTransactionsExcludingIncome(userId);
 
         assertEquals(expected, response);
         verify(loadBalancerClient).choose(transactionServiceString);
@@ -102,7 +102,7 @@ public class TransactionServiceTest {
 
         // then
         IllegalStateException exception = assertThrows(IllegalStateException.class, () -> {
-            transcationService.getTransactionsExcludingIncome(userId);
+            transactionService.getTransactionsExcludingIncome(userId);
         });
 
         assertEquals("No instances available for transaction_service", exception.getMessage());
@@ -126,9 +126,9 @@ public class TransactionServiceTest {
         ResponseSpec responseSpec = mock(ResponseSpec.class);
 
         // uses java reflect to access information
-        Field restClientField = TranscationService.class.getDeclaredField("restClient");
+        Field restClientField = TransactionService.class.getDeclaredField("restClient");
         restClientField.setAccessible(true);
-        restClientField.set(transcationService, restClient);
+        restClientField.set(transactionService, restClient);
 
         // when
         when(loadBalancerClient.choose(transactionServiceString)).thenReturn(instance);
@@ -141,7 +141,7 @@ public class TransactionServiceTest {
         when(responseSpec.body(any(ParameterizedTypeReference.class))).thenReturn(expected);
 
         // then
-        List<TransactionDTO> response = transcationService.getTransactionsExcludingIncome(userId);
+        List<TransactionDTO> response = transactionService.getTransactionsExcludingIncome(userId);
 
         assertEquals(expected, response);
         verify(loadBalancerClient).choose(transactionServiceString);

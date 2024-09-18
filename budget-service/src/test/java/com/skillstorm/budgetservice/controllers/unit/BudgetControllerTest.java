@@ -1,4 +1,4 @@
-package com.skillstorm.budgetservice.unit.controllers;
+package com.skillstorm.budgetservice.controllers.unit;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.verify;
@@ -121,7 +121,7 @@ public class BudgetControllerTest {
     }
 
     @Test
-    public void testGetTranscationsByMonthYear() {
+    public void testGetTransactionsByMonthYear() {
         String monthYearString = "2021-01";
         LocalDate monthYear = LocalDate.of(2021, 1, 1);
         Integer headerUserId = 1;
@@ -129,7 +129,7 @@ public class BudgetControllerTest {
 
         when(budgetService.findTransactionByMonthYear(monthYear, headerUserId)).thenReturn(transactionDTOs);
 
-        ResponseEntity<List<TransactionDTO>> response = budgetController.getTranscationsByMonthYear(monthYearString, headerUserId);
+        ResponseEntity<List<TransactionDTO>> response = budgetController.getTransactionsByMonthYear(monthYearString, headerUserId);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(transactionDTOs, response.getBody());
