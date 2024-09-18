@@ -52,8 +52,6 @@ public class MonthlySummaryServiceIntegrationTest {
         monthlySumRepository.save(monthlySummary1);
         monthlySumRepository.save(monthlySummary2);
 
-        System.out.println(monthlySummary1);
-
         List<MonthlySummary> result = monthlySumSvc.findAllMonthlySummarys();
 
         assertTrue(result.size() == 2);    
