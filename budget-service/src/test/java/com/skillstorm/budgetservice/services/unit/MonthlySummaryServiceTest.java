@@ -1,4 +1,4 @@
-package com.skillstorm.budgetservice.unit.services;
+package com.skillstorm.budgetservice.services.unit;
 
 import java.util.List;
 import java.util.Optional;

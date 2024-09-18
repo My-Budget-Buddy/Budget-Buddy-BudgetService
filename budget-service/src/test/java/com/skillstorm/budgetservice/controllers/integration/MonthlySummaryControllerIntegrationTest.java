@@ -1,4 +1,4 @@
-package com.skillstorm.budgetservice.integration.controllers;
+package com.skillstorm.budgetservice.controllers.integration;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;

@@ -1,4 +1,4 @@
-package com.skillstorm.budgetservice.unit.services;
+package com.skillstorm.budgetservice.services.unit;
 
 import java.util.List;
 import java.util.Optional;
@@ -175,19 +175,4 @@ public class BudgetServiceTest {
         verify(budgetRepository).deleteAllBudgetsByUserId(anyInt());
     }
 
-    // @Test
-    // public void testFindTransactionByMonthYear() {
-    //     int userId = 1;
-    //     List<TransactionDTO> transactionDTOs = Arrays.asList(new TransactionDTO(), new TransactionDTO());
-        
-    //     ArgumentCaptor<String> requestCaptor = ArgumentCaptor.forClass(String.class);
-    //     ArgumentCaptor<Integer> messageCaptor = ArgumentCaptor.forClass(Integer.class);
-
-    //     List<TransactionDTO> response = budgetService.findTransactionByMonthYear(LocalDate.now(), userId);
-        
-    //     verify(rabbitTemplate).convertAndSend(requestCaptor.capture(), messageCaptor.capture(), any(MessagePostProcessor.class));
-        
-    //     assertEquals(requestCaptor.getValue(), "budget-request");
-    //     assertEquals(messageCaptor.getValue(), userId);
-    // }
 }

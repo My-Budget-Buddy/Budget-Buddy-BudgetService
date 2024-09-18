@@ -1,4 +1,4 @@
-package com.skillstorm.budgetservice.unit.models;
+package com.skillstorm.budgetservice.models;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
@@ -6,7 +6,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -14,8 +13,6 @@ import java.time.LocalDateTime;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.meanbean.test.BeanVerifier;
-
-import com.skillstorm.budgetservice.models.Budget;
 
 public class BudgetTest {
 
@@ -81,11 +78,11 @@ public class BudgetTest {
         assertEquals(now, budget.getCreatedTimeStamp());
     }
 
-    // @Test
-    // void testPrePersist() {
-    //     budget.onCreate();
-    //     assertNotNull(budget.getCreatedTimeStamp());
-    // }
+    @Test
+    void testPrePersist() {
+        budget.onCreate();
+        assertNotNull(budget.getCreatedTimeStamp());
+    }
 
     @Test
     void testNonNullSpentAmount() {

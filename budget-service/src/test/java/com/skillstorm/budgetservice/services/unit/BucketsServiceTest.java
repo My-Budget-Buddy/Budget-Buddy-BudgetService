@@ -1,4 +1,4 @@
-package com.skillstorm.budgetservice.unit.services;
+package com.skillstorm.budgetservice.services.unit;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;

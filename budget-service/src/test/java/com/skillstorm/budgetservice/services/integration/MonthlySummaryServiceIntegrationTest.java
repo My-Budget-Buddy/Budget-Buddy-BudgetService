@@ -1,4 +1,4 @@
-package com.skillstorm.budgetservice.integration.services;
+package com.skillstorm.budgetservice.services.integration;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;

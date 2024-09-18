@@ -1,4 +1,4 @@
-package com.skillstorm.budgetservice.unit.controllers;
+package com.skillstorm.budgetservice.controllers.unit;
 
 import java.util.List;
 import java.util.Optional;
@@ -101,7 +101,6 @@ public class BucketControllerTest {
 
     @Test
     public void testGetBucketByBucketIdisNotPresent() {
-        Buckets bucket = new Buckets(1, "", BigDecimal.valueOf(0), BigDecimal.valueOf(0), LocalDate.now(), false, false, LocalDateTime.now());
         int bucketId = 1;
         String headerUserId = "1";
         

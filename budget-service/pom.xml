@@ -134,7 +134,7 @@
                         </goals>
                         <configuration>
 							<excludes>
-								<exclude>**/integration/**</exclude>
+								<exclude>**/*IntegrationTest.java</exclude>
 							</excludes>
 							<rules>
                           	  	<rule>
