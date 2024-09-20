@@ -46,6 +46,10 @@ pipeline {
         }
     }
 
+    environment{
+      NAMESPACE = 'budget-services'
+    }
+
     stages {
         stage('Deploy Postgres') {
             when {
