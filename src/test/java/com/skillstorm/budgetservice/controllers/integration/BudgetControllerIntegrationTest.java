@@ -56,7 +56,7 @@ public class BudgetControllerIntegrationTest {
 
 		mockMvc.perform(get("/budgets"))
 				.andExpect(status().isOk())
-				.andExpect(jsonPath("$.length()").value(6));
+				.andExpect(jsonPath("$.length()").value(10));
 	};
 
 	@Test
@@ -65,7 +65,7 @@ public class BudgetControllerIntegrationTest {
 		mockMvc.perform(get("/budgets/userBudgets")
 				.header("User-ID", 1))
 				.andExpect(status().isOk())
-				.andExpect(jsonPath("$.length()").value(2));
+				.andExpect(jsonPath("$.length()").value(4));
 	}
 
 	@Test

@@ -47,7 +47,7 @@ public class BucketControllerIntegrationTest {
 
         mockMvc.perform(get("/buckets/all"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.length()").value(6));
+                .andExpect(jsonPath("$.length()").value(8));
     }
 
     @Test
