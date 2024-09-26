@@ -244,6 +244,32 @@ pipeline {
           }
       }
 
+            // Set up the database for the staging environment
+      stage('Reset Database for Functional Tests') {
+          when {
+              branch 'testing-cohort'
+          }
+
+          steps {
+              container('aws-kubectl') {
+                  withCredentials([
+                          string(credentialsId: 'STAGING_DATABASE_USER', variable: 'DATABASE_USERNAME'),
+                          string(credentialsId: 'STAGING_DATABASE_PASSWORD', variable: 'DATABASE_PASSWORD')])
+                  {
+                  sh '''
+                  aws eks --region us-east-1 update-kubeconfig --name project3-eks
+                  
+                  # deploy staging db
+
+                  cd Budget-Buddy-Kubernetes/Databases
+                  chmod +x ./deploy-database.sh
+                  ./deploy-database.sh ${NAMESPACE} $DATABASE_USERNAME $DATABASE_PASSWORD
+                  '''
+                  }
+              }
+          }
+      }
+
       stage('Selenium/Cucumber Tests'){
         when {
             branch 'testing-cohort'
